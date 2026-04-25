@@ -30,8 +30,3 @@
   }
 }
 
-@layer utilities {
-  .font-display {
-    font-family: 'Fraunces', serif;
-  }
-}

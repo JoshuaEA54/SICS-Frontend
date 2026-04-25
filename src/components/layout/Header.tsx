@@ -17,12 +17,15 @@ type HeaderProps = HeaderPublicProps | HeaderAuthProps
 
 function LogoSection() {
   return (
-    <Link to="/" className="flex h-full items-center gap-4">
-      <span className="font-display text-[25.6px] font-bold tracking-[-0.512px] text-text-primary">
-        SICS
-      </span>
-      <span className="h-7 w-px bg-border" aria-hidden />
-      <span className="text-[11.5px] font-light leading-tight text-text-secondary">
+    <Link to="/" className="flex h-full items-center gap-3">
+      <div className="flex items-center gap-2">
+        <img src="/favicon.svg" alt="SICS logo" className="h-7 w-7 sm:h-8 sm:w-8" />
+        <span className="text-[22px] font-bold tracking-[-0.512px] text-text-primary sm:text-[25.6px]">
+          SICS
+        </span>
+      </div>
+      <span className="hidden h-7 w-px bg-border sm:block" aria-hidden />
+      <span className="hidden text-[11.5px] font-light leading-tight text-text-secondary sm:block">
         Sistema Integrado de Cumplimiento en
         <br />
         Seguridad
@@ -34,7 +37,7 @@ function LogoSection() {
 export function Header(props: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 h-[64.8px] border-b border-border bg-white">
-      <div className="mx-auto flex h-full max-w-[1140px] items-center justify-between px-8">
+      <div className="mx-auto flex h-full max-w-[1140px] items-center justify-between px-4 sm:px-8">
         <LogoSection />
 
         {props.variant === 'public' && (

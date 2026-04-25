@@ -44,7 +44,6 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['"DM Sans"', 'sans-serif'],
-        display: ['Fraunces', 'serif'],
       },
       borderRadius: {
         DEFAULT: '8px',
