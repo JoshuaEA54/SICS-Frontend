@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #1d4ed8;
+    --color-primary-hover: #1e40af;
+    --color-bg: #faf8f4;
+    --color-surface: #ffffff;
+    --color-surface-alt: #f0ede7;
+    --color-border: #ddd8ce;
+    --color-text-primary: #1a1a2e;
+    --color-text-secondary: #6b6b80;
+    --color-text-muted: #9a9aaa;
+    --color-teal: #0d9488;
+    --color-amber: #f59e0b;
+  }
+
+  html {
+    font-family: 'DM Sans', sans-serif;
+    background-color: #faf8f4;
+    color: #1a1a2e;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Fraunces', serif;
+  }
+}
