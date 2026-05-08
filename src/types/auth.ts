@@ -21,10 +21,17 @@ export interface GoogleTokenRequest {
   credential: string
 }
 
+export interface GoogleProfile {
+  name: string
+  email: string
+  picture?: string
+}
+
 export interface TokenResponse {
   access_token: string
   refresh_token: string
   token_type: string
   flow: AuthFlow
   user: User | null
+  google_profile: GoogleProfile | null
 }

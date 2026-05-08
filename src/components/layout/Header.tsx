@@ -1,23 +1,20 @@
-import { Link } from 'react-router-dom'
-import { Avatar } from '@/components/ui/Avatar'
+import { Link } from "react-router-dom";
+import { Avatar } from "@/components/ui/Avatar";
+import { useAuthStore } from "@/store/authStore";
 
-interface HeaderPublicProps {
-  variant: 'public'
+interface HeaderProps {
+  variant: "public" | "auth";
 }
-
-interface HeaderAuthProps {
-  variant: 'auth'
-  userName: string
-  userEmail: string
-}
-
-type HeaderProps = HeaderPublicProps | HeaderAuthProps
 
 function LogoSection() {
   return (
     <Link to="/" className="flex h-full items-center gap-3">
       <div className="flex items-center gap-2">
-        <img src="/favicon.svg" alt="SICS logo" className="h-7 w-7 sm:h-8 sm:w-8" />
+        <img
+          src="/favicon.svg"
+          alt="SICS logo"
+          className="h-7 w-7 sm:h-8 sm:w-8"
+        />
         <span className="text-[22px] font-bold tracking-[-0.512px] text-text-primary sm:text-[25.6px]">
           SICS
         </span>
@@ -29,22 +26,26 @@ function LogoSection() {
         Seguridad
       </span>
     </Link>
-  )
+  );
 }
 
-export function Header(props: HeaderProps) {
+export function Header({ variant }: HeaderProps) {
+  const user = useAuthStore((s) => s.user);
+
   return (
     <header className="sticky top-0 z-30 h-[64.8px] border-b border-border bg-white">
       <div className="mx-auto flex h-full max-w-[1140px] items-center justify-between px-4 sm:px-8">
         <LogoSection />
 
-{props.variant === 'auth' && (
+        {variant === "auth" && user && (
           <div className="flex items-center gap-3">
-            <Avatar name={props.userName} size="sm" />
-            <span className="text-[12.8px] text-text-dim">{props.userEmail}</span>
+            <Avatar name={user.name} size="sm" />
+            <span className="text-[12.8px] text-text-dim">
+              {user.email}
+            </span>
           </div>
         )}
       </div>
     </header>
-  )
+  );
 }

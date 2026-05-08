@@ -3,10 +3,10 @@ import { type Company, type Sector, type EmployeeRange } from '@/types/company'
 
 export const companiesApi = {
   getSectors: () =>
-    apiClient.get<Sector[]>('/companies/sectors').then((r) => r.data),
+    apiClient.get<{ items: Sector[] }>('/companies/sectors').then((r) => r.data.items),
 
   getEmployeeRanges: () =>
-    apiClient.get<EmployeeRange[]>('/companies/employee-ranges').then((r) => r.data),
+    apiClient.get<{ items: EmployeeRange[] }>('/companies/employee-ranges').then((r) => r.data.items),
 
   getMyCompany: () =>
     apiClient.get<Company>('/companies/me').then((r) => r.data),

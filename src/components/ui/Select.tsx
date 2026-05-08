@@ -1,4 +1,4 @@
-import { type SelectHTMLAttributes, useId } from 'react'
+import { type SelectHTMLAttributes, forwardRef, useId } from 'react'
 
 interface SelectOption {
   value: string | number
@@ -14,17 +14,20 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   helperText?: string
 }
 
-export function Select({
-  label,
-  required,
-  options,
-  placeholder,
-  error,
-  helperText,
-  className = '',
-  id: idProp,
-  ...props
-}: SelectProps) {
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
+  {
+    label,
+    required,
+    options,
+    placeholder,
+    error,
+    helperText,
+    className = '',
+    id: idProp,
+    ...props
+  },
+  ref,
+) {
   const generatedId = useId()
   const id = idProp ?? generatedId
 
@@ -38,6 +41,7 @@ export function Select({
       )}
       <div className="relative">
         <select
+          ref={ref}
           id={id}
           className={`w-full appearance-none rounded-[7px] border bg-surface-bg px-[13.4px] py-[9.4px] pr-8 text-sm font-light text-text-primary transition-colors focus:border-primary focus:bg-white focus:outline-none ${error ? 'border-red-400' : 'border-border'} ${className}`}
           {...props}
@@ -66,4 +70,4 @@ export function Select({
       {error && <p className="text-[11.5px] text-red-500">{error}</p>}
     </div>
   )
-}
+})

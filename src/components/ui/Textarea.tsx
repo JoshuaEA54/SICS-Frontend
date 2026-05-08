@@ -1,4 +1,4 @@
-import { type TextareaHTMLAttributes, useId } from 'react'
+import { type TextareaHTMLAttributes, forwardRef, useId } from 'react'
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
@@ -7,15 +7,18 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   error?: string
 }
 
-export function Textarea({
-  label,
-  required,
-  helperText,
-  error,
-  className = '',
-  id: idProp,
-  ...props
-}: TextareaProps) {
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
+  {
+    label,
+    required,
+    helperText,
+    error,
+    className = '',
+    id: idProp,
+    ...props
+  },
+  ref,
+) {
   const generatedId = useId()
   const id = idProp ?? generatedId
 
@@ -31,6 +34,7 @@ export function Textarea({
         </label>
       )}
       <textarea
+        ref={ref}
         id={id}
         className={`w-full resize-none rounded-[7px] border bg-surface-bg px-[13.4px] py-[9.4px] text-[13.2px] font-light text-text-primary placeholder:text-text-primary/50 transition-colors focus:border-primary focus:bg-white focus:outline-none ${error ? 'border-red-400' : 'border-border'} ${className}`}
         rows={props.rows ?? 3}
@@ -42,4 +46,4 @@ export function Textarea({
       {error && <p className="text-[11.5px] text-red-500">{error}</p>}
     </div>
   )
-}
+})

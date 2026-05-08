@@ -6,15 +6,16 @@ import { loginErrorMessage } from '@/features/auth/utils'
 
 export function useGoogleAuth() {
   const setAuth = useAuthStore((s) => s.setAuth)
-  const clearAuth = useAuthStore((s) => s.clearAuth)
   const navigate = useNavigate()
 
   const handleSuccess = async (credential: string) => {
-    clearAuth()
     try {
       const data = await authApi.loginWithGoogle({ credential })
-      setAuth(data.user, data.access_token, data.refresh_token, data.flow)
-      navigate(data.flow === 'new_company' || !data.user ? '/registro' : '/evaluaciones')
+      const user = data.user ?? (data.google_profile
+        ? { id: 0, role: 'company_rep' as const, ...data.google_profile }
+        : null)
+      setAuth(user, data.access_token, data.refresh_token, data.flow)
+      navigate(data.flow === 'new_company' ? '/registro' : '/evaluaciones')
     } catch (err) {
       toastError(loginErrorMessage(err))
     }
