@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { GoogleLogin } from '@react-oauth/google'
 import { Header } from '@/components/layout/Header'
 import { PageLayout } from '@/components/layout/PageLayout'
-import { Button } from '@/components/ui/Button'
+import { useGoogleAuth } from '@/features/auth/hooks/useGoogleAuth'
 import { useMarquee } from '@/hooks/useMarquee'
 import { STEPS, STANDARDS, MARQUEE_SPEED } from './LandingPage.data'
 
@@ -32,11 +32,11 @@ function StandardsMarquee() {
 }
 
 export function LandingPage() {
-  const navigate = useNavigate()
+  const { handleSuccess, handleError } = useGoogleAuth()
 
   return (
     <PageLayout>
-      <Header variant="public" onStartEvaluation={() => navigate('/registro')} />
+      <Header variant="public" />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-[1140px] px-4 pb-16 pt-14 text-center sm:px-8 sm:pb-24 sm:pt-20">
@@ -60,9 +60,14 @@ export function LandingPage() {
         </p>
 
         <div className="mt-8 flex flex-col items-center gap-3 sm:mt-10 sm:flex-row sm:justify-center sm:gap-4">
-          <Button size="lg" onClick={() => navigate('/registro')}>
-            Comenzar evaluación
-          </Button>
+          <GoogleLogin
+              onSuccess={({ credential }) => credential && handleSuccess(credential)}
+              onError={handleError}
+              theme="outline"
+              size="large"
+              text="continue_with"
+              shape="rectangular"
+            />
           <a
             href="#como-funciona"
             className="text-[14px] font-medium text-text-secondary underline-offset-4 hover:underline sm:text-[15px]"

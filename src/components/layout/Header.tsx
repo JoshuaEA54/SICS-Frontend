@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Avatar } from '@/components/ui/Avatar'
-import { Button } from '@/components/ui/Button'
 
 interface HeaderPublicProps {
   variant: 'public'
-  onStartEvaluation?: () => void
 }
 
 interface HeaderAuthProps {
@@ -40,17 +38,7 @@ export function Header(props: HeaderProps) {
       <div className="mx-auto flex h-full max-w-[1140px] items-center justify-between px-4 sm:px-8">
         <LogoSection />
 
-        {props.variant === 'public' && (
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={props.onStartEvaluation}
-          >
-            Iniciar evaluación
-          </Button>
-        )}
-
-        {props.variant === 'auth' && (
+{props.variant === 'auth' && (
           <div className="flex items-center gap-3">
             <Avatar name={props.userName} size="sm" />
             <span className="text-[12.8px] text-text-dim">{props.userEmail}</span>

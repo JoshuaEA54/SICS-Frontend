@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: '/api/v1',
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -18,7 +18,8 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error.response?.status === 401) {
+    const isAuthRoute = error.config?.url?.startsWith('/auth/')
+    if (error.response?.status === 401 && !isAuthRoute) {
       localStorage.removeItem('sics-auth')
       window.location.href = '/'
     }
