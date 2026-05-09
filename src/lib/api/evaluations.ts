@@ -8,8 +8,8 @@ export const evaluationsApi = {
   getEvaluation: (id: number) =>
     apiClient.get<Evaluation>(`/evaluations/${id}`).then((r) => r.data),
 
-  createEvaluation: () =>
-    apiClient.post<Evaluation>('/evaluations').then((r) => r.data),
+  createEvaluation: (companyId: string) =>
+    apiClient.post<Evaluation>('/evaluations/', { company_id: companyId }).then((r) => r.data),
 
   saveResponse: (
     evaluationId: number,

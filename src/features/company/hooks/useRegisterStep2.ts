@@ -86,11 +86,12 @@ export function useRegisterStep2() {
         tokenData.flow,
       );
 
+      const evaluation = await evaluationsApi.createEvaluation(user.company_id!);
+
       await Promise.all(
         contacts.map((c) => companiesApi.addContact(user.company_id!, c)),
       );
 
-      const evaluation = await evaluationsApi.createEvaluation();
       clearRegister();
       navigate(`/cuestionario/${evaluation.id}`);
     } catch (err) {
