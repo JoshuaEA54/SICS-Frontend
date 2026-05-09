@@ -1,3 +1,5 @@
+import { CheckSmIcon } from '@/components/ui/Icons'
+
 type StepStatus = 'completed' | 'active' | 'pending'
 
 interface Step {
@@ -23,19 +25,6 @@ function getStepStatus(
   return 'pending'
 }
 
-function CheckIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-      <path
-        d="M2.5 7l3 3 6-6"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
 
 export function StepBreadcrumb({ steps }: StepBreadcrumbProps) {
   return (
@@ -49,7 +38,7 @@ export function StepBreadcrumb({ steps }: StepBreadcrumbProps) {
           <div className="flex items-center gap-1.5">
             {step.status === 'completed' && (
               <span className="flex size-[14px] items-center justify-center text-teal">
-                <CheckIcon />
+                <CheckSmIcon />
               </span>
             )}
             {step.status === 'active' && (

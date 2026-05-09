@@ -1,1 +1,1 @@
-export type { User, UserRole, AuthState, AuthResponse } from '@/types/auth'
+export type { User, UserRole, AuthState } from '@/types/auth'

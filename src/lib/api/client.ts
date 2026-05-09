@@ -1,27 +1,45 @@
 import axios from 'axios'
+import { useAuthStore } from '@/store/authStore'
 
 export const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: '/api/v1',
   headers: { 'Content-Type': 'application/json' },
 })
 
 apiClient.interceptors.request.use((config) => {
-  const raw = localStorage.getItem('sics-auth')
-  if (raw) {
-    const parsed = JSON.parse(raw) as { state?: { token?: string } }
-    const token = parsed?.state?.token
-    if (token) config.headers.Authorization = `Bearer ${token}`
-  }
+  const token = useAuthStore.getState().token
+  if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
 apiClient.interceptors.response.use(
   (res) => res,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('sics-auth')
+  async (error) => {
+    const isAuthRoute = ['/auth/google', '/auth/refresh'].some(
+      (route) => error.config?.url?.startsWith(route),
+    )
+    const isRetry = error.config?._retry
+
+    if (error.response?.status === 401 && !isAuthRoute && !isRetry) {
+      const { refreshToken, setAuth, clearAuth } = useAuthStore.getState()
+
+      if (refreshToken) {
+        try {
+          const { authApi } = await import('./auth')
+          const data = await authApi.refresh(refreshToken)
+          setAuth(data.user ?? null, data.access_token, data.refresh_token, data.flow)
+          error.config._retry = true
+          error.config.headers.Authorization = `Bearer ${data.access_token}`
+          return apiClient(error.config)
+        } catch {
+          // refresh falló
+        }
+      }
+
+      clearAuth()
       window.location.href = '/'
     }
+
     return Promise.reject(error)
   },
 )

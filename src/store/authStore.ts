@@ -1,12 +1,14 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { type User } from '@/types/auth'
+import { type User, type AuthFlow } from '@/types/auth'
 
 interface AuthStore {
   user: User | null
   token: string | null
+  refreshToken: string | null
+  flow: AuthFlow | null
   isAuthenticated: boolean
-  setAuth: (user: User, token: string) => void
+  setAuth: (user: User | null, token: string, refreshToken: string, flow: AuthFlow) => void
   clearAuth: () => void
 }
 
@@ -15,10 +17,23 @@ export const useAuthStore = create<AuthStore>()(
     (set) => ({
       user: null,
       token: null,
+      refreshToken: null,
+      flow: null,
       isAuthenticated: false,
-      setAuth: (user, token) => set({ user, token, isAuthenticated: true }),
-      clearAuth: () => set({ user: null, token: null, isAuthenticated: false }),
+      setAuth: (user, token, refreshToken, flow) =>
+        set({ user, token, refreshToken, flow, isAuthenticated: true }),
+      clearAuth: () =>
+        set({ user: null, token: null, refreshToken: null, flow: null, isAuthenticated: false }),
     }),
-    { name: 'sics-auth' },
+    {
+      name: 'sics-auth',
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        refreshToken: state.refreshToken,
+        flow: state.flow,
+        isAuthenticated: state.isAuthenticated,
+      }),
+    },
   ),
 )
