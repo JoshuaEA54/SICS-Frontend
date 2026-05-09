@@ -15,7 +15,9 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (res) => res,
   async (error) => {
-    const isAuthRoute = error.config?.url?.startsWith('/auth/')
+    const isAuthRoute = ['/auth/google', '/auth/refresh'].some(
+      (route) => error.config?.url?.startsWith(route),
+    )
     const isRetry = error.config?._retry
 
     if (error.response?.status === 401 && !isAuthRoute && !isRetry) {
