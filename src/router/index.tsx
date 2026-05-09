@@ -36,10 +36,11 @@ function requireStep2() {
   return null
 }
 
-// Requiere registro completo (paso 1 + paso 2)
+// Requiere registro completo (paso 1 + paso 2) o rol experto
 function requireRegistered() {
   const user = getUser()
   if (!user) return redirect('/')
+  if (user.role === 'expert') return null
   if (!user.company_id) return redirect('/registro')
   if (!user.job_title) return redirect('/registro/paso-2')
   return null

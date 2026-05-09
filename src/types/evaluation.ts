@@ -33,7 +33,9 @@ export interface Evaluation {
 }
 
 export interface EvaluationSummary {
-  id: number
+  id: string
+  company_id: string
+  company_name?: string
   status: EvaluationStatus
   created_at: string
   submitted_at?: string

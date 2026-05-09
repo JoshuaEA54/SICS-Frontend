@@ -1,9 +1,12 @@
 import { apiClient } from './client'
-import { type Evaluation, type EvaluationSummary, type Response } from '@/types/evaluation'
+import { type Evaluation, type EvaluationStatus, type EvaluationSummary, type Response } from '@/types/evaluation'
+import { type PaginatedResponse } from '@/types/api'
 
 export const evaluationsApi = {
-  getMyEvaluations: () =>
-    apiClient.get<EvaluationSummary[]>('/evaluations/').then((r) => r.data),
+  getEvaluations: (params?: { status?: EvaluationStatus; company_id?: string }) =>
+    apiClient
+      .get<PaginatedResponse<EvaluationSummary>>('/evaluations/', { params })
+      .then((r) => r.data.items),
 
   getDraftEvaluation: () =>
     apiClient.get<Evaluation | null>('/evaluations/draft').then((r) => r.data),
