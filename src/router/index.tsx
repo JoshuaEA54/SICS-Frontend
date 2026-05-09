@@ -4,12 +4,44 @@ import { RegisterPage } from '@/pages/RegisterPage'
 import { RegisterStep2Page } from '@/pages/RegisterStep2Page'
 import { QuestionnairePage } from '@/pages/QuestionnairePage'
 import { EvaluationsPage } from '@/pages/EvaluationsPage'
+import { type User } from '@/types/auth'
 
-function requireAuth() {
-  const raw = localStorage.getItem('sics-auth')
-  if (!raw) return redirect('/')
-  const parsed = JSON.parse(raw) as { state?: { isAuthenticated?: boolean } }
-  if (!parsed?.state?.isAuthenticated) return redirect('/')
+function getUser(): User | null {
+  try {
+    const raw = localStorage.getItem('sics-auth')
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { state?: { isAuthenticated?: boolean; user?: User } }
+    if (!parsed?.state?.isAuthenticated) return null
+    return parsed.state.user ?? null
+  } catch {
+    return null
+  }
+}
+
+// Solo para usuarios en paso 1: sin empresa aún
+function requireStep1() {
+  const user = getUser()
+  if (!user) return redirect('/')
+  if (user.job_title) return redirect('/evaluaciones')
+  if (user.company_id) return redirect('/registro/paso-2')
+  return null
+}
+
+// Solo para usuarios en paso 2: tienen empresa pero sin cargo
+function requireStep2() {
+  const user = getUser()
+  if (!user) return redirect('/')
+  if (user.job_title) return redirect('/evaluaciones')
+  if (!user.company_id) return redirect('/registro')
+  return null
+}
+
+// Requiere registro completo (paso 1 + paso 2)
+function requireRegistered() {
+  const user = getUser()
+  if (!user) return redirect('/')
+  if (!user.company_id) return redirect('/registro')
+  if (!user.job_title) return redirect('/registro/paso-2')
   return null
 }
 
@@ -21,21 +53,21 @@ export const router = createBrowserRouter([
   {
     path: '/registro',
     element: <RegisterPage />,
-    loader: requireAuth,
+    loader: requireStep1,
   },
   {
     path: '/registro/paso-2',
     element: <RegisterStep2Page />,
-    loader: requireAuth,
+    loader: requireStep2,
   },
   {
     path: '/cuestionario/:evaluationId',
     element: <QuestionnairePage />,
-    loader: requireAuth,
+    loader: requireRegistered,
   },
   {
     path: '/evaluaciones',
     element: <EvaluationsPage />,
-    loader: requireAuth,
+    loader: requireRegistered,
   },
 ])
