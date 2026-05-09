@@ -7,6 +7,8 @@ export interface User {
   name: string
   role: UserRole
   picture?: string
+  company_id?: string
+  job_title?: string
 }
 
 export interface AuthState {

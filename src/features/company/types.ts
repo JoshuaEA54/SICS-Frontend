@@ -1,1 +1,8 @@
-export type { Company, Sector, EmployeeRange, Contact, CompanyCreateStep1, CompanyCreateStep2 } from '@/types/company'
+export type {
+  Company,
+  Sector,
+  EmployeeRange,
+  Contact,
+  ContactCreate,
+  CompanyCreate,
+} from "@/types/company";

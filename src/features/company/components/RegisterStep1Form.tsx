@@ -60,6 +60,7 @@ export function RegisterStep1Form() {
           <Input
             label="Nombre de la empresa"
             required
+            maxLength={100}
             error={errors.name?.message}
             {...register("name")}
           />
@@ -75,6 +76,7 @@ export function RegisterStep1Form() {
             />
             <Select
               label="Cantidad de empleados"
+              required
               options={employeeRanges}
               placeholder="Seleccione"
               error={errors.employee_range_id?.message}
