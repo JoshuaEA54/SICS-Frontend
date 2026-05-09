@@ -61,4 +61,7 @@ export const evaluationsApi = {
 
   deleteEvidence: (evidenceId: string) =>
     apiClient.delete(`/evaluations/evidence/${evidenceId}`),
+
+  updateLastGroup: (evaluationId: string, lastGroupId: string) =>
+    apiClient.patch(`/evaluations/${evaluationId}/last-group`, { last_group_id: lastGroupId }),
 }

@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { type ControlGroup } from "@/types/controls";
 import { toastError } from "@/store/toastStore";
+import { evaluationsApi } from "@/lib/api/evaluations";
 import { type ResponseState } from "./useQuestionnaire";
 
 export function useGroupNavigation(
+  evaluationId: string,
   groupsRef: React.MutableRefObject<ControlGroup[]>,
   responsesMapRef: React.MutableRefObject<Record<string, ResponseState>>,
   groups: ControlGroup[],
@@ -20,6 +22,8 @@ export function useGroupNavigation(
     }
   }, [initialGroupIndex]);
 
+  const isInitialized = useRef(false)
+
   const activeGroupIndex = useMemo(() => {
     const idx = groups.findIndex((g) =>
       g.controls.some((c) => {
@@ -29,6 +33,17 @@ export function useGroupNavigation(
     );
     return idx === -1 ? groups.length - 1 : idx;
   }, [groups, responsesMap]);
+
+  useEffect(() => {
+    if (!isInitialized.current) {
+      isInitialized.current = true;
+      return;
+    }
+    const activeGroup = groups[activeGroupIndex];
+    if (activeGroup) {
+      evaluationsApi.updateLastGroup(evaluationId, activeGroup.id).catch(() => {});
+    }
+  }, [activeGroupIndex]);
 
   const goToGroup = useCallback((index: number) => {
     if (index === currentGroupIndexRef.current) return;

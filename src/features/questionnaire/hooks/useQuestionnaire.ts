@@ -32,6 +32,7 @@ export function useQuestionnaire(evaluationId: string) {
 
   const { currentGroupIndex, activeGroupIndex, goToGroup, goNext, goPrev } =
     useGroupNavigation(
+      evaluationId,
       groupsRef,
       responsesMapRef,
       groups,
