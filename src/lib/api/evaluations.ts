@@ -3,7 +3,10 @@ import { type Evaluation, type EvaluationSummary, type Response } from '@/types/
 
 export const evaluationsApi = {
   getMyEvaluations: () =>
-    apiClient.get<EvaluationSummary[]>('/evaluations').then((r) => r.data),
+    apiClient.get<EvaluationSummary[]>('/evaluations/').then((r) => r.data),
+
+  getDraftEvaluation: () =>
+    apiClient.get<Evaluation | null>('/evaluations/draft').then((r) => r.data),
 
   getEvaluation: (id: number) =>
     apiClient.get<Evaluation>(`/evaluations/${id}`).then((r) => r.data),

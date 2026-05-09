@@ -1,14 +1,14 @@
-import { useNavigate } from "react-router-dom";
 import { authApi } from "@/lib/api/auth";
 import { useAuthStore } from "@/store/authStore";
 import { useRegisterStore } from "@/store/registerStore";
 import { toastError } from "@/store/toastStore";
 import { loginErrorMessage } from "@/features/auth/utils";
+import { usePostLoginRedirect } from "@/hooks/usePostLoginRedirect";
 
 export function useGoogleAuth() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const clearRegister = useRegisterStore((s) => s.clear);
-  const navigate = useNavigate();
+  const redirect = usePostLoginRedirect();
 
   const handleSuccess = async (credential: string) => {
     try {
@@ -20,11 +20,7 @@ export function useGoogleAuth() {
           : null);
       clearRegister();
       setAuth(user, data.access_token, data.refresh_token, data.flow);
-      if (data.flow === "new_company") {
-        navigate(data.user?.company_id ? "/registro/paso-2" : "/registro");
-      } else {
-        navigate("/evaluaciones");
-      }
+      await redirect(user);
     } catch (err) {
       toastError(loginErrorMessage(err));
     }
