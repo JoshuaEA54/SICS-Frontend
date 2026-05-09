@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { type ControlGroup } from '@/types/controls'
 import { type ResponseState } from '../hooks/useQuestionnaire'
 import { CheckSmIcon } from '@/components/ui/Icons'
@@ -18,6 +19,12 @@ interface GroupSidebarProps {
 }
 
 export function GroupSidebar({ groups, currentIndex, responsesMap, onSelectGroup }: GroupSidebarProps) {
+  const activeRef = useRef<HTMLLIElement>(null)
+
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }, [currentIndex])
+
   return (
     <aside className="sticky top-[112.8px] h-[calc(100vh-112.8px)] w-[248px] shrink-0 overflow-y-auto border-r border-border bg-white">
       <p className="px-[17.6px] pb-2 pt-[19.6px] text-[10.6px] font-medium uppercase tracking-[1.056px] text-text-muted">
@@ -30,7 +37,7 @@ export function GroupSidebar({ groups, currentIndex, responsesMap, onSelectGroup
           const isCompleted = !isActive && isGroupCompleted(group, responsesMap)
 
           return (
-            <li key={group.id}>
+            <li key={group.id} ref={isActive ? activeRef : null}>
               <button
                 onClick={() => onSelectGroup(index)}
                 className={`flex w-full items-center gap-[9px] border-l-[2.4px] py-3 pl-[17.6px] pr-[15.2px] text-left transition-colors ${
