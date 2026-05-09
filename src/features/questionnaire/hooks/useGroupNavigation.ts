@@ -4,6 +4,7 @@ import { toastError } from "@/store/toastStore";
 import { evaluationsApi } from "@/lib/api/evaluations";
 import { type ResponseState } from "./useQuestionnaire";
 
+
 export function useGroupNavigation(
   evaluationId: string,
   groupsRef: React.MutableRefObject<ControlGroup[]>,
@@ -82,5 +83,27 @@ export function useGroupNavigation(
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  return { currentGroupIndex, activeGroupIndex, goToGroup, goNext, goPrev };
+  const handleSubmit = useCallback(async (): Promise<boolean> => {
+    const group = groupsRef.current[currentGroupIndexRef.current];
+    const unanswered =
+      group?.controls.filter((c) => {
+        const r = responsesMapRef.current[c.id];
+        return r === undefined || r.complies === null;
+      }).length ?? 0;
+    if (unanswered > 0) {
+      toastError(
+        `Faltan ${unanswered} control${unanswered === 1 ? "" : "es"} por responder en este grupo.`,
+      );
+      return false;
+    }
+    try {
+      await evaluationsApi.submitEvaluation(evaluationId);
+      return true;
+    } catch {
+      toastError("No se pudo enviar la evaluación. Intenta de nuevo.");
+      return false;
+    }
+  }, [evaluationId, groupsRef, responsesMapRef]);
+
+  return { currentGroupIndex, activeGroupIndex, goToGroup, goNext, goPrev, handleSubmit };
 }

@@ -30,7 +30,7 @@ export function useQuestionnaire(evaluationId: string) {
     handleDeleteEvidence,
   } = useResponseHandlers(evaluationId, responsesMapRef, setResponsesMap);
 
-  const { currentGroupIndex, activeGroupIndex, goToGroup, goNext, goPrev } =
+  const { currentGroupIndex, activeGroupIndex, goToGroup, goNext, goPrev, handleSubmit } =
     useGroupNavigation(
       evaluationId,
       groupsRef,
@@ -56,5 +56,6 @@ export function useQuestionnaire(evaluationId: string) {
     goToGroup,
     goNext,
     goPrev,
+    handleSubmit,
   };
 }

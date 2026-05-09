@@ -12,9 +12,9 @@ const styles: Record<
     text: "text-[#1e3a8a]",
   },
   amber: {
-    wrapper: "border-[#fde68a] bg-[#fffbeb]",
-    icon: "text-[#d97706]",
-    text: "text-[#92400e]",
+    wrapper: "border-amber-border bg-amber-light",
+    icon: "text-amber",
+    text: "text-amber-brown",
   },
 };
 

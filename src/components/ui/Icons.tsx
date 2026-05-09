@@ -88,6 +88,24 @@ export function PaperclipIcon() {
   )
 }
 
+export function ClockIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="10" r="8.5" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M10 5.5V10l3 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+export function CalendarIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M1.5 5.5h11M4.5 1v3M9.5 1v3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 export function FileIcon() {
   return (
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none">

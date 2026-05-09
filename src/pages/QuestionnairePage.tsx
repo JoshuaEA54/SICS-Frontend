@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Header } from '@/components/layout/Header'
 import { StepHeader } from '@/components/layout/StepHeader'
 import { PageLayout } from '@/components/layout/PageLayout'
@@ -12,6 +12,7 @@ import { toastError } from '@/store/toastStore'
 
 export function QuestionnairePage() {
   const { evaluationId = '' } = useParams<{ evaluationId: string }>()
+  const navigate = useNavigate()
 
   const {
     groups,
@@ -28,6 +29,7 @@ export function QuestionnairePage() {
     goToGroup,
     goNext,
     goPrev,
+    handleSubmit,
   } = useQuestionnaire(evaluationId)
 
   useEffect(() => {
@@ -47,6 +49,13 @@ export function QuestionnairePage() {
         return r !== undefined && r.complies !== null
       }).length
     : 0
+
+  const isLastGroup = currentGroupIndex === groups.length - 1
+
+  const onSubmitClick = async () => {
+    const ok = await handleSubmit()
+    if (ok) navigate('/evaluaciones')
+  }
 
   return (
     <PageLayout>
@@ -100,14 +109,23 @@ export function QuestionnairePage() {
                 Grupo anterior
               </button>
 
-              <button
-                onClick={goNext}
-                disabled={currentGroupIndex === groups.length - 1}
-                className="flex items-center gap-2 rounded-[8px] bg-primary px-[17.4px] py-[10px] text-[14px] font-medium text-white shadow-[0px_2px_4px_rgba(29,78,216,0.2)] transition-opacity disabled:opacity-50 enabled:hover:opacity-90"
-              >
-                Siguiente grupo
-                <ArrowRightIcon />
-              </button>
+              {isLastGroup ? (
+                <button
+                  onClick={onSubmitClick}
+                  className="flex items-center gap-2 rounded-[8px] bg-teal px-[17.4px] py-[10px] text-[14px] font-medium text-white shadow-[0px_2px_4px_rgba(13,148,136,0.2)] transition-opacity hover:opacity-90"
+                >
+                  Enviar evaluación
+                  <ArrowRightIcon />
+                </button>
+              ) : (
+                <button
+                  onClick={goNext}
+                  className="flex items-center gap-2 rounded-[8px] bg-primary px-[17.4px] py-[10px] text-[14px] font-medium text-white shadow-[0px_2px_4px_rgba(29,78,216,0.2)] transition-opacity hover:opacity-90"
+                >
+                  Siguiente grupo
+                  <ArrowRightIcon />
+                </button>
+              )}
             </div>
           </main>
         </div>
