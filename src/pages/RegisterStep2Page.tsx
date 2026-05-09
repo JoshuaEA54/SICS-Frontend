@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+﻿import { useEffect } from 'react'
 import { Header } from '@/components/layout/Header'
 import { PageLayout } from '@/components/layout/PageLayout'
 import { StepHeader } from '@/components/layout/StepHeader'
@@ -9,7 +9,7 @@ export function RegisterStep2Page() {
 
   return (
     <PageLayout>
-      <Header variant="auth" />
+      <Header />
       <StepHeader current="registro" />
       <div className="mx-auto max-w-[580px] px-4 py-8">
         <RegisterStep2Form />

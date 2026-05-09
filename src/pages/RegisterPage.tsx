@@ -1,4 +1,4 @@
-import { Header } from '@/components/layout/Header'
+﻿import { Header } from '@/components/layout/Header'
 import { PageLayout } from '@/components/layout/PageLayout'
 import { StepHeader } from '@/components/layout/StepHeader'
 import { RegisterStep1Form } from '@/features/company/components/RegisterStep1Form'
@@ -6,7 +6,7 @@ import { RegisterStep1Form } from '@/features/company/components/RegisterStep1Fo
 export function RegisterPage() {
   return (
     <PageLayout>
-      <Header variant="auth" />
+      <Header />
       <StepHeader current="registro" />
       <div className="mx-auto max-w-[580px] px-4 py-8">
         <RegisterStep1Form />

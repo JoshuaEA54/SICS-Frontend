@@ -1,15 +1,15 @@
-import { Header } from '@/components/layout/Header'
-import { PageLayout } from '@/components/layout/PageLayout'
-import { ExpertEvaluationsList } from '@/features/evaluations/components/ExpertEvaluationsList'
-import { useAuthStore } from '@/store/authStore'
+﻿import { Header } from "@/components/layout/Header";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { ExpertEvaluationsList } from "@/features/evaluations/components/ExpertEvaluationsList";
+import { useAuthStore } from "@/store/authStore";
 
 export function EvaluationsPage() {
-  const user = useAuthStore((s) => s.user)
-  const isExpert = user?.role === 'expert'
+  const user = useAuthStore((s) => s.user);
+  const isExpert = user?.role === "expert";
 
   return (
     <PageLayout>
-      <Header variant="auth" />
+      <Header />
       <div className="mx-auto w-full max-w-3xl px-4 py-10">
         {isExpert ? (
           <>
@@ -20,10 +20,12 @@ export function EvaluationsPage() {
           </>
         ) : (
           <div className="flex items-center justify-center py-24">
-            <p className="text-text-secondary">Mis evaluaciones — próximamente</p>
+            <p className="text-text-secondary">
+              Mis evaluaciones — próximamente
+            </p>
           </div>
         )}
       </div>
     </PageLayout>
-  )
+  );
 }

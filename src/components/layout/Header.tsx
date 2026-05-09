@@ -2,10 +2,6 @@ import { Link } from "react-router-dom";
 import { Avatar } from "@/components/ui/Avatar";
 import { useAuthStore } from "@/store/authStore";
 
-interface HeaderProps {
-  variant: "public" | "auth";
-}
-
 function LogoSection() {
   return (
     <Link to="/" className="flex h-full items-center gap-3">
@@ -29,7 +25,7 @@ function LogoSection() {
   );
 }
 
-export function Header({ variant }: HeaderProps) {
+export function Header() {
   const user = useAuthStore((s) => s.user);
 
   return (
@@ -37,7 +33,7 @@ export function Header({ variant }: HeaderProps) {
       <div className="mx-auto flex h-full max-w-[1140px] items-center justify-between px-4 sm:px-8">
         <LogoSection />
 
-        {variant === "auth" && user && (
+        {user && (
           <div className="flex items-center gap-3">
             <Avatar name={user.name} size="sm" />
             <span className="text-[12.8px] text-text-dim">
