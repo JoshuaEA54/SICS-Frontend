@@ -1,4 +1,4 @@
-import { type InputHTMLAttributes, type ReactNode, useId } from 'react'
+import { type InputHTMLAttributes, type ReactNode, forwardRef, useId } from 'react'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -8,16 +8,19 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   leftElement?: ReactNode
 }
 
-export function Input({
-  label,
-  required,
-  helperText,
-  error,
-  leftElement,
-  className = '',
-  id: idProp,
-  ...props
-}: InputProps) {
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  {
+    label,
+    required,
+    helperText,
+    error,
+    leftElement,
+    className = '',
+    id: idProp,
+    ...props
+  },
+  ref,
+) {
   const generatedId = useId()
   const id = idProp ?? generatedId
 
@@ -36,6 +39,7 @@ export function Input({
           </span>
         )}
         <input
+          ref={ref}
           id={id}
           className={`w-full rounded-[7px] border bg-surface-bg px-[13.4px] py-[9.4px] text-sm font-light text-text-primary placeholder:text-text-muted/50 transition-colors focus:border-primary focus:bg-white focus:outline-none ${error ? 'border-red-400' : 'border-border'} ${leftElement ? 'pl-9' : ''} ${className}`}
           {...props}
@@ -47,4 +51,4 @@ export function Input({
       {error && <p className="text-[11.5px] text-red-500">{error}</p>}
     </div>
   )
-}
+})

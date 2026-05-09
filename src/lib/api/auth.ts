@@ -7,4 +7,7 @@ export const authApi = {
 
   refresh: (refresh_token: string) =>
     apiClient.post<TokenResponse>('/auth/refresh', { refresh_token }).then((r) => r.data),
+
+  register: (body: { name: string; job_title: string }) =>
+    apiClient.post<TokenResponse>('/auth/register', body).then((r) => r.data),
 }

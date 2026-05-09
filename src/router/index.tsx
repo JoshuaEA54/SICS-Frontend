@@ -1,6 +1,7 @@
 import { createBrowserRouter, redirect } from 'react-router-dom'
 import { LandingPage } from '@/pages/LandingPage'
 import { RegisterPage } from '@/pages/RegisterPage'
+import { RegisterStep2Page } from '@/pages/RegisterStep2Page'
 import { QuestionnairePage } from '@/pages/QuestionnairePage'
 import { EvaluationsPage } from '@/pages/EvaluationsPage'
 
@@ -20,6 +21,11 @@ export const router = createBrowserRouter([
   {
     path: '/registro',
     element: <RegisterPage />,
+    loader: requireAuth,
+  },
+  {
+    path: '/registro/paso-2',
+    element: <RegisterStep2Page />,
     loader: requireAuth,
   },
   {

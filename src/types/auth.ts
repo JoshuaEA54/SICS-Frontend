@@ -7,6 +7,8 @@ export interface User {
   name: string
   role: UserRole
   picture?: string
+  company_id?: string
+  job_title?: string
 }
 
 export interface AuthState {
@@ -21,10 +23,17 @@ export interface GoogleTokenRequest {
   credential: string
 }
 
+export interface GoogleProfile {
+  name: string
+  email: string
+  picture?: string
+}
+
 export interface TokenResponse {
   access_token: string
   refresh_token: string
   token_type: string
   flow: AuthFlow
   user: User | null
+  google_profile: GoogleProfile | null
 }

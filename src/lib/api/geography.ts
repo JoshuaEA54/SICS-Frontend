@@ -1,17 +1,27 @@
-import { apiClient } from './client'
-import { type Province, type Canton, type District } from '@/types/geography'
+import { apiClient } from "./client";
+import { type Province, type Canton, type District } from "@/types/geography";
 
 export const geographyApi = {
   getProvinces: () =>
-    apiClient.get<Province[]>('/geography/provinces').then((r) => r.data),
+    apiClient
+      .get<{ items: Province[] }>("/geography/provinces")
+      .then((r) => r.data.items),
 
   getCantons: (provinceId: number) =>
     apiClient
-      .get<Canton[]>(`/geography/provinces/${provinceId}/cantons`)
-      .then((r) => r.data),
+      .get<{ items: Canton[] }>(`/geography/provinces/${provinceId}/cantons`)
+      .then((r) => r.data.items),
 
   getDistricts: (cantonId: number) =>
     apiClient
-      .get<District[]>(`/geography/cantons/${cantonId}/districts`)
+      .get<{ items: District[] }>(`/geography/cantons/${cantonId}/districts`)
+      .then((r) => r.data.items),
+
+  getCanton: (cantonId: number) =>
+    apiClient.get<Canton>(`/geography/cantons/${cantonId}`).then((r) => r.data),
+
+  getDistrict: (districtId: number) =>
+    apiClient
+      .get<District>(`/geography/districts/${districtId}`)
       .then((r) => r.data),
-}
+};
