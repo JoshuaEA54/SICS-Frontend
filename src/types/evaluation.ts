@@ -20,6 +20,11 @@ export interface Response {
   verdict: ResponseVerdict | null
 }
 
+export interface ReviewProgress {
+  completed: number
+  required: number
+}
+
 export interface Evaluation {
   id: string
   company_id: string
@@ -29,6 +34,8 @@ export interface Evaluation {
   submitted_at?: string | null
   reviewed_at?: string | null
   created_at: string
+  compliance_percentage?: number | null
+  review_progress?: ReviewProgress | null
 }
 
 export interface EvaluationSummary {
@@ -39,4 +46,6 @@ export interface EvaluationSummary {
   created_at: string
   submitted_at?: string
   reviewed_at?: string
+  compliance_percentage?: number | null
+  review_progress?: ReviewProgress | null
 }

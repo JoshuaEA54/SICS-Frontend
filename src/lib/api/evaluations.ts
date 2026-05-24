@@ -1,5 +1,12 @@
 import { apiClient } from './client'
-import { type Evaluation, type EvaluationStatus, type EvaluationSummary, type Response, type Evidence } from '@/types/evaluation'
+import {
+  type Evaluation,
+  type EvaluationStatus,
+  type EvaluationSummary,
+  type Response,
+  type ResponseVerdict,
+  type Evidence,
+} from '@/types/evaluation'
 import { type PaginatedResponse } from '@/types/api'
 
 export const evaluationsApi = {
@@ -64,4 +71,14 @@ export const evaluationsApi = {
 
   updateLastGroup: (evaluationId: string, lastGroupId: string) =>
     apiClient.patch(`/evaluations/${evaluationId}/last-group`, { last_group_id: lastGroupId }),
+
+  updateVerdict: (responseId: string, verdict: ResponseVerdict) =>
+    apiClient
+      .patch<Response>(`/evaluations/responses/${responseId}/verdict`, { verdict })
+      .then((r) => r.data),
+
+  finalizeReview: (evaluationId: string) =>
+    apiClient
+      .post<Evaluation>(`/evaluations/${evaluationId}/finalize-review`)
+      .then((r) => r.data),
 }
