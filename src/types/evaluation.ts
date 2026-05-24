@@ -29,6 +29,7 @@ export interface Evaluation {
   id: string
   company_id: string
   company_name?: string | null
+  sector_name?: string | null
   status: EvaluationStatus
   last_group_id?: string | null
   submitted_at?: string | null
@@ -42,6 +43,7 @@ export interface EvaluationSummary {
   id: string
   company_id: string
   company_name?: string
+  sector_name?: string | null
   status: EvaluationStatus
   created_at: string
   submitted_at?: string

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { evaluationsApi } from '@/lib/api/evaluations'
+import { API_MAX_PAGE_SIZE } from '@/lib/constants'
 import { useAuthStore } from '@/store/authStore'
 import { type EvaluationSummary } from '@/types/evaluation'
 
@@ -32,7 +33,10 @@ export function useCompanyEvaluations() {
 
     async function load() {
       try {
-        const all = await evaluationsApi.getEvaluations({ company_id: companyId })
+        const { items: all } = await evaluationsApi.listEvaluations({
+          company_id: companyId,
+          size: API_MAX_PAGE_SIZE,
+        })
         if (cancelled) return
 
         const submitted = all.filter((e) => e.status === 'submitted')

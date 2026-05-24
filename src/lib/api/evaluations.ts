@@ -8,12 +8,29 @@ import {
   type Evidence,
 } from '@/types/evaluation'
 import { type PaginatedResponse } from '@/types/api'
+import { API_MAX_PAGE_SIZE } from '@/lib/constants'
+
+export interface ListEvaluationsParams {
+  status?: EvaluationStatus
+  company_id?: string
+  sector_id?: number
+  page?: number
+  size?: number
+}
+
+export interface EvaluationInboxSummary {
+  pending: number
+  reviewed: number
+}
 
 export const evaluationsApi = {
-  getEvaluations: (params?: { status?: EvaluationStatus; company_id?: string }) =>
+  listEvaluations: (params?: ListEvaluationsParams) =>
     apiClient
       .get<PaginatedResponse<EvaluationSummary>>('/evaluations/', { params })
-      .then((r) => r.data.items),
+      .then((r) => r.data),
+
+  getEvaluationsSummary: () =>
+    apiClient.get<EvaluationInboxSummary>('/evaluations/summary').then((r) => r.data),
 
   getDraftEvaluation: () =>
     apiClient.get<Evaluation | null>('/evaluations/draft').then((r) => r.data),
@@ -24,7 +41,7 @@ export const evaluationsApi = {
   getResponses: (evaluationId: string) =>
     apiClient
       .get<PaginatedResponse<Response>>(`/evaluations/${evaluationId}/responses`, {
-        params: { size: 100 },
+        params: { size: API_MAX_PAGE_SIZE },
       })
       .then((r) => r.data.items),
 
@@ -62,7 +79,7 @@ export const evaluationsApi = {
   getEvidenceForResponse: (responseId: string) =>
     apiClient
       .get<PaginatedResponse<Evidence>>(`/evaluations/responses/${responseId}/evidence`, {
-        params: { size: 100 },
+        params: { size: API_MAX_PAGE_SIZE },
       })
       .then((r) => r.data.items),
 
