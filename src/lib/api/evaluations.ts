@@ -9,7 +9,6 @@ import {
 } from '@/types/evaluation'
 import { type PaginatedResponse } from '@/types/api'
 import { API_MAX_PAGE_SIZE } from '@/lib/constants'
-
 export interface ListEvaluationsParams {
   status?: EvaluationStatus
   company_id?: string
@@ -97,5 +96,20 @@ export const evaluationsApi = {
   finalizeReview: (evaluationId: string) =>
     apiClient
       .post<Evaluation>(`/evaluations/${evaluationId}/finalize-review`)
+      .then((r) => r.data),
+
+  fetchEvidenceFile: (evidenceId: string) =>
+    apiClient
+      .get<Blob>(`/evaluations/evidence/${evidenceId}/file`, { responseType: 'blob' })
+      .then((r) => r.data),
+
+  fetchReportBlob: (evaluationId: string) =>
+    apiClient
+      .get<Blob>(`/evaluations/${evaluationId}/report`, { responseType: 'blob' })
+      .then((r) => r.data),
+
+  regenerateReport: (evaluationId: string) =>
+    apiClient
+      .post<Evaluation>(`/evaluations/${evaluationId}/regenerate-report`)
       .then((r) => r.data),
 }

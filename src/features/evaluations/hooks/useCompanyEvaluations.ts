@@ -7,7 +7,9 @@ import { type EvaluationSummary } from '@/types/evaluation'
 interface CompanyEvaluationsState {
   submitted: EvaluationSummary[]
   reviewed: EvaluationSummary[]
+  draft: EvaluationSummary | null
   hasSubmitted: boolean
+  hasDraft: boolean
   loading: boolean
   error: string | null
 }
@@ -18,7 +20,9 @@ export function useCompanyEvaluations() {
   const [state, setState] = useState<CompanyEvaluationsState>({
     submitted: [],
     reviewed: [],
+    draft: null,
     hasSubmitted: false,
+    hasDraft: false,
     loading: true,
     error: null,
   })
@@ -39,12 +43,21 @@ export function useCompanyEvaluations() {
         })
         if (cancelled) return
 
+        const draft = all.find((e) => e.status === 'draft') ?? null
         const submitted = all.filter((e) => e.status === 'submitted')
         const reviewed = all
           .filter((e) => e.status === 'reviewed')
           .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
-        setState({ submitted, reviewed, hasSubmitted: submitted.length > 0, loading: false, error: null })
+        setState({
+          submitted,
+          reviewed,
+          draft,
+          hasSubmitted: submitted.length > 0,
+          hasDraft: draft != null,
+          loading: false,
+          error: null,
+        })
       } catch {
         if (!cancelled) setState((s) => ({ ...s, loading: false, error: 'No se pudieron cargar las evaluaciones.' }))
       }
