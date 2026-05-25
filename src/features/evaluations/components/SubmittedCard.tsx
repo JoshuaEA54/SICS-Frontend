@@ -38,8 +38,8 @@ export function SubmittedCard({ evaluation, num }: SubmittedCardProps) {
 
       <div className="mt-4">
         <InfoBanner variant="amber">
-          El experto está analizando los resultados de su evaluación. Recibirá una notificación
-          por correo cuando el informe esté listo.
+          El experto está analizando los resultados. Él le enviará una notificación
+          por correo al finalizar la revisión.
         </InfoBanner>
       </div>
     </div>

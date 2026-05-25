@@ -2,12 +2,19 @@ import { type ControlGroup } from '@/types/controls'
 
 interface GroupHeaderProps {
   group: ControlGroup
-  answeredCount: number
+  completedCount: number
+  totalCount?: number
+  progressSuffix?: string
 }
 
-export function GroupHeader({ group, answeredCount }: GroupHeaderProps) {
-  const total = group.controls.length
-  const progressPercent = total > 0 ? (answeredCount / total) * 100 : 0
+export function GroupHeader({
+  group,
+  completedCount,
+  totalCount,
+  progressSuffix = 'respondidos',
+}: GroupHeaderProps) {
+  const total = totalCount ?? group.controls.length
+  const progressPercent = total > 0 ? (completedCount / total) * 100 : 0
 
   return (
     <div className="rounded-[12px] border border-border bg-white px-6 py-5 shadow-[0px_1px_3px_rgba(26,26,46,0.04)]">
@@ -22,7 +29,9 @@ export function GroupHeader({ group, answeredCount }: GroupHeaderProps) {
         </div>
       </div>
 
-      <p className="mt-1 text-[13.2px] font-light text-text-secondary">{group.description}</p>
+      <p className="mt-1 text-[13.2px] font-light text-text-secondary">
+        {group.description}
+      </p>
 
       <div className="mt-4 flex items-center gap-4">
         <div className="h-[5px] flex-1 overflow-hidden rounded-full bg-[#f0ede7]">
@@ -32,7 +41,7 @@ export function GroupHeader({ group, answeredCount }: GroupHeaderProps) {
           />
         </div>
         <span className="shrink-0 text-[11.5px] font-medium text-text-secondary">
-          {answeredCount} / {total} respondidos
+          {completedCount} / {total} {progressSuffix}
         </span>
       </div>
     </div>
