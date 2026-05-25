@@ -62,7 +62,7 @@ export function ConfirmDialog({
             variant="primary"
             loading={loading}
             onClick={onConfirm}
-            className="bg-teal hover:opacity-90"
+            className="bg-teal hover:!bg-teal hover:brightness-110"
           >
             {confirmLabel}
           </Button>

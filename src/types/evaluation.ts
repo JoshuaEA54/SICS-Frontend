@@ -2,6 +2,8 @@ export type EvaluationStatus = 'draft' | 'submitted' | 'reviewed'
 
 export type ResponseVerdict = 'complies' | 'complies_with_observations' | 'does_not_comply'
 
+export type ReportStatus = 'generating' | 'ready' | 'failed'
+
 export interface Evidence {
   id: string
   response_id: string
@@ -36,7 +38,11 @@ export interface Evaluation {
   reviewed_at?: string | null
   created_at: string
   compliance_percentage?: number | null
+  compliant_count?: number | null
+  total_controls?: number | null
   review_progress?: ReviewProgress | null
+  report_status?: ReportStatus | null
+  report_generated_at?: string | null
 }
 
 export interface EvaluationSummary {
@@ -49,5 +55,9 @@ export interface EvaluationSummary {
   submitted_at?: string
   reviewed_at?: string
   compliance_percentage?: number | null
+  compliant_count?: number | null
+  total_controls?: number | null
   review_progress?: ReviewProgress | null
+  report_status?: ReportStatus | null
+  report_generated_at?: string | null
 }

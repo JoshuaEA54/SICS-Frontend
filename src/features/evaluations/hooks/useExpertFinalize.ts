@@ -66,7 +66,7 @@ export function useExpertFinalize({
       const updated = await evaluationsApi.finalizeReview(evaluation.id);
       setEvaluation(updated);
       setFinalizeConfirmOpen(false);
-      toastSuccess("Evaluación marcada como revisada.");
+      toastSuccess("Revisión cerrada. El informe se está generando en segundo plano.");
       navigate("/evaluaciones");
     } catch (err: unknown) {
       const detail = (err as { response?: { data?: { detail?: string } } })

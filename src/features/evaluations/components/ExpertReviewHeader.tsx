@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { EvaluationBadge } from "@/components/ui/Badge";
+import { ComplianceScore } from "@/features/evaluations/components/ComplianceScore";
 import { ReviewProgressLabel } from "@/features/evaluations/components/ReviewProgressLabel";
 import { type Evaluation, type ReviewProgress } from "@/types/evaluation";
 
@@ -31,9 +32,13 @@ export function ExpertReviewHeader({
           )}
           {evaluation.status === "reviewed" &&
             evaluation.compliance_percentage != null && (
-              <p className="text-sm font-medium text-text-primary">
-                Cumplimiento: {evaluation.compliance_percentage}%
-              </p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-text-secondary">Cumplimiento:</span>
+                <ComplianceScore
+                  percentage={evaluation.compliance_percentage}
+                  size="sm"
+                />
+              </div>
             )}
         </div>
         <Button variant="secondary" onClick={onBack}>

@@ -38,7 +38,7 @@ export function ExpertReviewFooter({
           loading={finalizing}
           onClick={onFinalize}
           rightIcon={<ArrowRightIcon />}
-          className="bg-teal shadow-[0px_2px_4px_rgba(13,148,136,0.2)] hover:opacity-90"
+          className="bg-teal shadow-[0px_2px_4px_rgba(13,148,136,0.2)] hover:!bg-teal hover:brightness-110"
         >
           Marcar como revisado
         </Button>
