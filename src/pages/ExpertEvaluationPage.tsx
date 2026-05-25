@@ -1,57 +1,180 @@
+import { useLayoutEffect, useEffect, useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { EvidencePreviewModal } from "@/components/ui/EvidencePreviewModal";
 import { Button } from "@/components/ui/Button";
-import { EvaluationBadge } from "@/components/ui/Badge";
-import { useExpertEvaluationDetail } from '@/features/evaluations/hooks/useExpertEvaluationDetail'
+import { ExpertControlCard } from "@/features/evaluations/components/ExpertControlCard";
+import { ExpertReviewFooter } from "@/features/evaluations/components/ExpertReviewFooter";
+import { ExpertReviewHeader } from "@/features/evaluations/components/ExpertReviewHeader";
+import { useExpertReview } from "@/features/evaluations/hooks/useExpertReview";
+import { GroupHeader } from "@/components/shared/GroupHeader";
+import { GroupSidebar } from "@/components/shared/GroupSidebar";
 
 export function ExpertEvaluationPage() {
-  const { evaluation, loading, error, displayTitle, goToInbox } =
-    useExpertEvaluationDetail()
+  const [sidebarTop, setSidebarTop] = useState(0);
+
+  const {
+    groups,
+    evaluation,
+    loading,
+    error,
+    reload,
+    isReadOnly,
+    isEditable,
+    currentGroup,
+    currentGroupIndex,
+    isLastGroup,
+    isFirstGroup,
+    goToGroup,
+    goNext,
+    goPrev,
+    responsesByControlId,
+    reviewProgress,
+    groupProgress,
+    isGroupCompleted,
+    handleVerdictChange,
+    requestFinalize,
+    handleFinalize,
+    finalizeConfirmOpen,
+    cancelFinalize,
+    finalizing,
+    getEvidenceForControl,
+    loadingEvidence,
+    displayTitle,
+    goToInbox,
+    previewOpen,
+    previewLoading,
+    previewEvidence,
+    previewResult,
+    openPreview,
+    closePreview,
+    downloadPreview,
+    downloadEvidence,
+  } = useExpertReview();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // El sidebar se pega justo bajo el Header principal.
+  // Medimos el <header> directamente del DOM para no envolverlo ni hardcodear valores.
+  useLayoutEffect(() => {
+    const headerEl = document.querySelector("header");
+    if (!headerEl) return;
+
+    const update = () => setSidebarTop(headerEl.getBoundingClientRect().height);
+    update();
+    const obs = new ResizeObserver(update);
+    obs.observe(headerEl);
+    window.addEventListener("resize", update);
+    return () => {
+      obs.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
 
   return (
     <PageLayout>
       <Header />
-      <div className="mx-auto w-full max-w-3xl px-4 py-10">
-        {loading && (
-          <div className="flex justify-center py-16">
-            <span className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          </div>
-        )}
 
-        {error && (
-          <div className="rounded-xl border border-border bg-surface p-8 text-center">
-            <p className="text-text-secondary">{error}</p>
-            <Button variant="secondary" className="mt-4" onClick={goToInbox}>
+      {loading && (
+        <div className="flex items-center justify-center py-24">
+          <span className="size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      )}
+
+      {error && (
+        <div className="flex flex-col items-center justify-center gap-4 py-24">
+          <p className="text-text-secondary">{error}</p>
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={reload}>
+              Reintentar
+            </Button>
+            <Button variant="ghost" onClick={goToInbox}>
               Volver a la bandeja
             </Button>
           </div>
-        )}
+        </div>
+      )}
 
-        {!loading && !error && evaluation && (
-          <div className="rounded-xl border border-border bg-surface p-8">
-            <div className="mb-6 flex flex-wrap items-center gap-3">
-              <h1 className="font-display text-2xl font-semibold text-text-primary">
-                {displayTitle}
-              </h1>
-              <EvaluationBadge status={evaluation.status} />
-            </div>
+      {!loading && !error && evaluation && currentGroup && (
+        <>
+          <ExpertReviewHeader
+            displayTitle={displayTitle}
+            evaluation={evaluation}
+            reviewProgress={reviewProgress}
+            onBack={goToInbox}
+          />
 
-            <p className="text-text-secondary">
-              Revisión control por control — disponible próximamente (Fase 3).
-            </p>
-            <p className="mt-2 text-sm text-text-muted">
-              Aquí podrá ver las respuestas de la empresa, emitir veredictos y
-              marcar la evaluación como revisada.
-            </p>
+          <div className="flex min-h-screen items-start px-[120px]">
+            <GroupSidebar
+              groups={groups}
+              currentIndex={currentGroupIndex}
+              onSelectGroup={goToGroup}
+              isGroupCompleted={isGroupCompleted}
+              stickyTop={sidebarTop}
+            />
 
-            <div className="mt-8">
-              <Button variant="secondary" onClick={goToInbox}>
-                Volver a la bandeja
-              </Button>
-            </div>
+            <main className="flex flex-1 flex-col gap-4 py-8 pl-8 pr-0">
+              <GroupHeader
+                group={currentGroup}
+                completedCount={groupProgress.completed}
+                totalCount={groupProgress.required}
+                progressSuffix={
+                  isReadOnly ? "controles con veredicto" : "veredictos emitidos"
+                }
+              />
+
+              {loadingEvidence && (
+                <p className="text-sm text-text-muted">Cargando evidencias…</p>
+              )}
+
+              {currentGroup.controls.map((control) => (
+                <ExpertControlCard
+                  key={control.id}
+                  control={control}
+                  response={responsesByControlId[control.id]}
+                  evidence={getEvidenceForControl(control.id)}
+                  readOnly={isReadOnly}
+                  onVerdictChange={handleVerdictChange}
+                  onPreviewEvidence={openPreview}
+                  onDownloadEvidence={downloadEvidence}
+                />
+              ))}
+
+              <ExpertReviewFooter
+                isFirstGroup={isFirstGroup}
+                isLastGroup={isLastGroup}
+                isEditable={isEditable}
+                finalizing={finalizing}
+                onPrev={goPrev}
+                onNext={goNext}
+                onFinalize={requestFinalize}
+              />
+            </main>
           </div>
-        )}
-      </div>
+
+          <ConfirmDialog
+            open={finalizeConfirmOpen}
+            title="Marcar como revisada"
+            description="Una vez confirmada, la evaluación quedará cerrada y no podrá modificar los veredictos emitidos. ¿Desea continuar?"
+            confirmLabel="Sí, marcar como revisada"
+            loading={finalizing}
+            onConfirm={handleFinalize}
+            onCancel={cancelFinalize}
+          />
+
+          <EvidencePreviewModal
+            open={previewOpen}
+            loading={previewLoading}
+            fileName={previewEvidence?.file_name ?? null}
+            result={previewResult}
+            onClose={closePreview}
+            onDownload={downloadPreview}
+          />
+        </>
+      )}
     </PageLayout>
   );
 }

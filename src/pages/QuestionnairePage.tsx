@@ -5,8 +5,8 @@ import { StepHeader } from '@/components/layout/StepHeader'
 import { PageLayout } from '@/components/layout/PageLayout'
 import { ArrowLeftIcon, ArrowRightIcon } from '@/components/ui/Icons'
 import { useQuestionnaire } from '@/features/questionnaire/hooks/useQuestionnaire'
-import { GroupSidebar } from '@/features/questionnaire/components/GroupSidebar'
-import { GroupHeader } from '@/features/questionnaire/components/GroupHeader'
+import { GroupSidebar } from '@/components/shared/GroupSidebar'
+import { GroupHeader } from '@/components/shared/GroupHeader'
 import { ControlCard } from '@/features/questionnaire/components/ControlCard'
 import { toastError } from '@/store/toastStore'
 
@@ -84,7 +84,7 @@ export function QuestionnairePage() {
           />
 
           <main className="flex flex-1 flex-col gap-4 py-8 pl-8 pr-0">
-            <GroupHeader group={currentGroup} answeredCount={answeredCount} />
+            <GroupHeader group={currentGroup} completedCount={answeredCount} />
 
             {currentGroup.controls.map((control) => (
               <ControlCard

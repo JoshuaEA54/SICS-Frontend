@@ -98,4 +98,9 @@ export const evaluationsApi = {
     apiClient
       .post<Evaluation>(`/evaluations/${evaluationId}/finalize-review`)
       .then((r) => r.data),
+
+  fetchEvidenceFile: (evidenceId: string) =>
+    apiClient
+      .get<Blob>(`/evaluations/evidence/${evidenceId}/file`, { responseType: 'blob' })
+      .then((r) => r.data),
 }

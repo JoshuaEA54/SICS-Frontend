@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react'
-import { type ControlGroup } from '@/types/controls'
-import { type ResponseState } from '../hooks/useQuestionnaire'
 import { CheckSmIcon } from '@/components/ui/Icons'
+import { type ResponseState } from '@/features/questionnaire/hooks/useQuestionnaire'
+import { type ControlGroup } from '@/types/controls'
 
-function isGroupCompleted(group: ControlGroup, responsesMap: Record<string, ResponseState>): boolean {
+function isQuestionnaireGroupCompleted(
+  group: ControlGroup,
+  responsesMap: Record<string, ResponseState>,
+): boolean {
   if (group.controls.length === 0) return false
   return group.controls.every((c) => {
     const r = responsesMap[c.id]
@@ -14,19 +17,53 @@ function isGroupCompleted(group: ControlGroup, responsesMap: Record<string, Resp
 interface GroupSidebarProps {
   groups: ControlGroup[]
   currentIndex: number
-  responsesMap: Record<string, ResponseState>
   onSelectGroup: (index: number) => void
+  responsesMap?: Record<string, ResponseState>
+  isGroupCompleted?: (group: ControlGroup) => boolean
+  /** Distancia desde el top del viewport cuando el sidebar es sticky (px). Default: Header + StepHeader. */
+  stickyTop?: number
 }
 
-export function GroupSidebar({ groups, currentIndex, responsesMap, onSelectGroup }: GroupSidebarProps) {
+export function GroupSidebar({
+  groups,
+  currentIndex,
+  onSelectGroup,
+  responsesMap = {},
+  isGroupCompleted,
+  stickyTop = 112.8,
+}: GroupSidebarProps) {
   const activeRef = useRef<HTMLLIElement>(null)
+  const asideRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     activeRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }, [currentIndex])
 
+  // Ajusta la altura del sidebar según su posición real en el viewport en cada scroll.
+  useEffect(() => {
+    const el = asideRef.current
+    if (!el) return
+
+    const update = () => {
+      const top = el.getBoundingClientRect().top
+      el.style.height = `calc(100dvh - ${Math.max(top, 0)}px)`
+    }
+
+    update()
+    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+
   return (
-    <aside className="sticky top-[112.8px] h-[calc(100vh-112.8px)] w-[248px] shrink-0 overflow-y-auto border-r border-border bg-white">
+    <aside
+      ref={asideRef}
+      className="sticky w-[248px] shrink-0 overflow-y-auto border-r border-border bg-white"
+      style={{ top: stickyTop }}
+    >
       <p className="px-[17.6px] pb-2 pt-[19.6px] text-[10.6px] font-medium uppercase tracking-[1.056px] text-text-muted">
         Grupos
       </p>
@@ -34,7 +71,11 @@ export function GroupSidebar({ groups, currentIndex, responsesMap, onSelectGroup
       <ul>
         {groups.map((group, index) => {
           const isActive = index === currentIndex
-          const isCompleted = !isActive && isGroupCompleted(group, responsesMap)
+          const isCompleted =
+            !isActive &&
+            (isGroupCompleted
+              ? isGroupCompleted(group)
+              : isQuestionnaireGroupCompleted(group, responsesMap))
 
           return (
             <li key={group.id} ref={isActive ? activeRef : null}>
