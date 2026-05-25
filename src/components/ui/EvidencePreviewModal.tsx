@@ -1,4 +1,5 @@
 import { type PreviewRenderResult } from '@/lib/evidencePreview'
+import { DocxPreviewFrame } from '@/lib/evidencePreview/DocxPreviewFrame'
 import { XIcon } from '@/components/ui/Icons'
 import { Button } from '@/components/ui/Button'
 
@@ -79,9 +80,13 @@ export function EvidencePreviewModal({
 
           {!loading && result?.kind === 'html' && (
             <div
-              className="prose prose-sm max-w-none rounded-md border border-border bg-white p-4 text-text-primary"
+              className="evidence-preview-html rounded-md border border-border bg-white p-4 text-text-primary"
               dangerouslySetInnerHTML={{ __html: result.content }}
             />
+          )}
+
+          {!loading && result?.kind === 'docx' && (
+            <DocxPreviewFrame blob={result.blob} />
           )}
 
           {!loading && result?.kind === 'download-only' && (

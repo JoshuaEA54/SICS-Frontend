@@ -30,3 +30,42 @@
   }
 }
 
+/* Vista previa de evidencias (Excel HTML, etc.) — CSS estático, no Tailwind dinámico */
+.evidence-preview-html table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+}
+
+.evidence-preview-html th,
+.evidence-preview-html td {
+  border: 1px solid #ddd8ce;
+  padding: 6px 8px;
+  vertical-align: top;
+  word-break: break-word;
+}
+
+.evidence-preview-html thead th {
+  background: #f0ede7;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.evidence-preview-html tbody tr:nth-child(even) td {
+  background: #faf8f4;
+}
+
+.evidence-preview-html .preview-truncated-note {
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #6b6b80;
+}
+
+/* docx-preview container */
+.docx-preview-wrapper {
+  min-height: 200px;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd8ce;
+}

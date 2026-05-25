@@ -43,4 +43,5 @@ export async function renderEvidencePreview(
 }
 
 export { revokePreviewUrls }
+export { DocxPreviewFrame } from './DocxPreviewFrame'
 export type { PreviewRenderResult } from './types'
