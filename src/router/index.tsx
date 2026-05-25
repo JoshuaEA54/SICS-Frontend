@@ -4,6 +4,7 @@ import { RegisterPage } from '@/pages/RegisterPage'
 import { RegisterStep2Page } from '@/pages/RegisterStep2Page'
 import { QuestionnairePage } from '@/pages/QuestionnairePage'
 import { EvaluationsPage } from '@/pages/EvaluationsPage'
+import { ExpertEvaluationPage } from '@/pages/ExpertEvaluationPage'
 import { type User } from '@/types/auth'
 
 function getUser(): User | null {
@@ -69,6 +70,11 @@ export const router = createBrowserRouter([
   {
     path: '/evaluaciones',
     element: <EvaluationsPage />,
+    loader: requireRegistered,
+  },
+  {
+    path: '/evaluaciones/:evaluationId',
+    element: <ExpertEvaluationPage />,
     loader: requireRegistered,
   },
 ])

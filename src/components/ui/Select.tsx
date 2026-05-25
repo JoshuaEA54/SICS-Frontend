@@ -1,5 +1,7 @@
 import { type SelectHTMLAttributes, forwardRef, useId } from 'react'
 
+import { ChevronDownIcon } from '@/components/ui/Icons'
+
 interface SelectOption {
   value: string | number
   label: string
@@ -59,9 +61,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         </select>
         {/* chevron icon */}
         <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <ChevronDownIcon />
         </span>
       </div>
       {helperText && !error && (

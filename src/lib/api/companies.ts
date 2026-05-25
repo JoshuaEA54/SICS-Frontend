@@ -1,5 +1,7 @@
 import { apiClient } from "./client";
+import { API_MAX_PAGE_SIZE } from "@/lib/constants";
 import { type TokenResponse } from "@/types/auth";
+import { type PaginatedResponse } from "@/types/api";
 import {
   type Company,
   type Sector,
@@ -21,6 +23,13 @@ export const companiesApi = {
 
   getCompany: (id: string) =>
     apiClient.get<Company>(`/companies/${id}`).then((r) => r.data),
+
+  listCompanies: (params?: { q?: string; size?: number }) =>
+    apiClient
+      .get<PaginatedResponse<{ id: string; name: string }>>("/companies/", {
+        params: { size: params?.size ?? API_MAX_PAGE_SIZE, ...(params?.q ? { q: params.q } : {}) },
+      })
+      .then((r) => r.data.items),
 
   create: (data: CompanyCreate) =>
     apiClient.post<TokenResponse>("/companies/", data).then((r) => r.data),

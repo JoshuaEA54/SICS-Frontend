@@ -1,12 +1,36 @@
 import { apiClient } from './client'
-import { type Evaluation, type EvaluationStatus, type EvaluationSummary, type Response, type Evidence } from '@/types/evaluation'
+import {
+  type Evaluation,
+  type EvaluationStatus,
+  type EvaluationSummary,
+  type Response,
+  type ResponseVerdict,
+  type Evidence,
+} from '@/types/evaluation'
 import { type PaginatedResponse } from '@/types/api'
+import { API_MAX_PAGE_SIZE } from '@/lib/constants'
+
+export interface ListEvaluationsParams {
+  status?: EvaluationStatus
+  company_id?: string
+  sector_id?: number
+  page?: number
+  size?: number
+}
+
+export interface EvaluationInboxSummary {
+  pending: number
+  reviewed: number
+}
 
 export const evaluationsApi = {
-  getEvaluations: (params?: { status?: EvaluationStatus; company_id?: string }) =>
+  listEvaluations: (params?: ListEvaluationsParams) =>
     apiClient
       .get<PaginatedResponse<EvaluationSummary>>('/evaluations/', { params })
-      .then((r) => r.data.items),
+      .then((r) => r.data),
+
+  getEvaluationsSummary: () =>
+    apiClient.get<EvaluationInboxSummary>('/evaluations/summary').then((r) => r.data),
 
   getDraftEvaluation: () =>
     apiClient.get<Evaluation | null>('/evaluations/draft').then((r) => r.data),
@@ -17,7 +41,7 @@ export const evaluationsApi = {
   getResponses: (evaluationId: string) =>
     apiClient
       .get<PaginatedResponse<Response>>(`/evaluations/${evaluationId}/responses`, {
-        params: { size: 100 },
+        params: { size: API_MAX_PAGE_SIZE },
       })
       .then((r) => r.data.items),
 
@@ -55,7 +79,7 @@ export const evaluationsApi = {
   getEvidenceForResponse: (responseId: string) =>
     apiClient
       .get<PaginatedResponse<Evidence>>(`/evaluations/responses/${responseId}/evidence`, {
-        params: { size: 100 },
+        params: { size: API_MAX_PAGE_SIZE },
       })
       .then((r) => r.data.items),
 
@@ -64,4 +88,14 @@ export const evaluationsApi = {
 
   updateLastGroup: (evaluationId: string, lastGroupId: string) =>
     apiClient.patch(`/evaluations/${evaluationId}/last-group`, { last_group_id: lastGroupId }),
+
+  updateVerdict: (responseId: string, verdict: ResponseVerdict) =>
+    apiClient
+      .patch<Response>(`/evaluations/responses/${responseId}/verdict`, { verdict })
+      .then((r) => r.data),
+
+  finalizeReview: (evaluationId: string) =>
+    apiClient
+      .post<Evaluation>(`/evaluations/${evaluationId}/finalize-review`)
+      .then((r) => r.data),
 }
