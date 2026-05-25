@@ -3,6 +3,7 @@ export type PreviewRenderResult =
   | { kind: 'image'; src: string }
   | { kind: 'text'; content: string }
   | { kind: 'html'; content: string }
+  | { kind: 'docx'; blob: Blob }
   | { kind: 'download-only'; message: string }
 
 export interface PreviewStrategy {
