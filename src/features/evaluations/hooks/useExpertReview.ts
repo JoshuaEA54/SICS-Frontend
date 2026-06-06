@@ -5,6 +5,7 @@ import { useExpertFinalize } from "@/features/evaluations/hooks/useExpertFinaliz
 import { useExpertReviewDerived } from "@/features/evaluations/hooks/useExpertReviewDerived";
 import { useExpertReviewLoader } from "@/features/evaluations/hooks/useExpertReviewLoader";
 import { useExpertReviewNavigation } from "@/features/evaluations/hooks/useExpertReviewNavigation";
+import { useExpertVerdictDraft } from "@/features/evaluations/hooks/useExpertVerdictDraft";
 import { useExpertVerdictHandlers } from "@/features/evaluations/hooks/useExpertVerdictHandlers";
 
 /** Orquestador de la pantalla de revisión del experto. */
@@ -26,6 +27,8 @@ export function useExpertReview() {
   const isReadOnly = evaluation?.status === "reviewed";
   const isEditable = evaluation?.status === "submitted";
 
+  const draft = useExpertVerdictDraft();
+
   const {
     currentGroup,
     currentGroupIndex,
@@ -36,7 +39,7 @@ export function useExpertReview() {
     goNext,
     goPrev,
     guardVerdictInteraction,
-  } = useExpertReviewNavigation(groups, responsesByControlId);
+  } = useExpertReviewNavigation(groups, responsesByControlId, draft);
 
   const { getEvidenceForControl, loadingEvidence } = useExpertEvidenceLoader(
     currentGroup,
@@ -54,6 +57,7 @@ export function useExpertReview() {
     setResponses,
     isReadOnly,
     guardVerdictInteraction,
+    draft,
   });
 
   const { reviewProgress, groupProgress, isGroupCompleted, displayTitle } =
@@ -62,6 +66,7 @@ export function useExpertReview() {
       responses,
       responsesByControlId,
       currentGroup,
+      draft,
     });
 
   const {
@@ -79,6 +84,7 @@ export function useExpertReview() {
     groups,
     activeGroupIndex,
     responses,
+    draft,
   });
 
   return {

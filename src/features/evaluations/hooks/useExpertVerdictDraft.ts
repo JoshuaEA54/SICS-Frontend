@@ -68,3 +68,5 @@ export function useExpertVerdictDraft() {
     scheduleDebouncedSave,
   }
 }
+
+export type ExpertVerdictDraft = ReturnType<typeof useExpertVerdictDraft>

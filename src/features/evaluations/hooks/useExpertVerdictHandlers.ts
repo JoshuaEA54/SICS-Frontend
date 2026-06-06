@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { verdictRequiresExpertObservations } from '@/features/evaluations/expertReview'
-import { useExpertVerdictDraft } from '@/features/evaluations/hooks/useExpertVerdictDraft'
+import { type ExpertVerdictDraft } from '@/features/evaluations/hooks/useExpertVerdictDraft'
 import { evaluationsApi } from '@/lib/api/evaluations'
 import { type Response, type ResponseVerdict } from '@/types/evaluation'
 import { toastError } from '@/store/toastStore'
@@ -10,6 +10,7 @@ interface UseExpertVerdictHandlersParams {
   setResponses: React.Dispatch<React.SetStateAction<Response[]>>
   isReadOnly: boolean
   guardVerdictInteraction: () => boolean
+  draft: ExpertVerdictDraft
 }
 
 export function useExpertVerdictHandlers({
@@ -17,9 +18,9 @@ export function useExpertVerdictHandlers({
   setResponses,
   isReadOnly,
   guardVerdictInteraction,
+  draft,
 }: UseExpertVerdictHandlersParams) {
   const responsesRef = useRef(responses)
-  const draft = useExpertVerdictDraft()
 
   useEffect(() => {
     responsesRef.current = responses
@@ -110,8 +111,13 @@ export function useExpertVerdictHandlers({
       if (!verdictRequiresExpertObservations(verdict)) return
 
       draft.setDraftText(responseId, text)
+
+      if (!text.trim()) {
+        draft.clearDebounce(responseId)
+        return
+      }
+
       draft.scheduleDebouncedSave(responseId, () => {
-        if (!text.trim()) return
         void persistVerdict(responseId, verdict!, text)
       })
     },

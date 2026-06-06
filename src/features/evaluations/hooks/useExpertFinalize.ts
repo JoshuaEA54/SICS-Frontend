@@ -1,7 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { evaluationsApi } from "@/lib/api/evaluations";
-import { canFinalizeEvaluation } from "@/features/evaluations/expertReview";
+import {
+  buildExpertReviewUi,
+  canFinalizeEvaluation,
+  type ExpertVerdictDraftSource,
+} from "@/features/evaluations/expertReview";
 import { type ControlGroup } from "@/types/controls";
 import { type Evaluation, type Response } from "@/types/evaluation";
 import { toastError, toastSuccess } from "@/store/toastStore";
@@ -13,6 +17,7 @@ interface UseExpertFinalizeParams {
   groups: ControlGroup[];
   activeGroupIndex: number;
   responses: Response[];
+  draft: ExpertVerdictDraftSource;
 }
 
 export function useExpertFinalize({
@@ -22,14 +27,20 @@ export function useExpertFinalize({
   groups,
   activeGroupIndex,
   responses,
+  draft,
 }: UseExpertFinalizeParams) {
   const navigate = useNavigate();
   const [finalizing, setFinalizing] = useState(false);
   const [finalizeConfirmOpen, setFinalizeConfirmOpen] = useState(false);
 
+  const ui = useMemo(
+    () => buildExpertReviewUi(draft),
+    [draft.getDisplayVerdict, draft.getObservationsValue],
+  );
+
   const canFinalize = useMemo(
-    () => canFinalizeEvaluation(evaluation, responses),
-    [evaluation, responses],
+    () => canFinalizeEvaluation(evaluation, responses, ui),
+    [evaluation, responses, ui],
   );
 
   const goToInbox = useCallback(() => navigate("/evaluaciones"), [navigate]);
