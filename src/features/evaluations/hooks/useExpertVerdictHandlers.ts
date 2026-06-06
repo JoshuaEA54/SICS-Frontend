@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
+import { verdictRequiresExpertObservations } from '@/features/evaluations/expertReview'
+import { useExpertVerdictDraft } from '@/features/evaluations/hooks/useExpertVerdictDraft'
 import { evaluationsApi } from '@/lib/api/evaluations'
 import { type Response, type ResponseVerdict } from '@/types/evaluation'
 import { toastError } from '@/store/toastStore'
@@ -17,6 +19,8 @@ export function useExpertVerdictHandlers({
   guardVerdictInteraction,
 }: UseExpertVerdictHandlersParams) {
   const responsesRef = useRef(responses)
+  const draft = useExpertVerdictDraft()
+
   useEffect(() => {
     responsesRef.current = responses
   }, [responses])
@@ -32,24 +36,110 @@ export function useExpertVerdictHandlers({
     [setResponses],
   )
 
-  const handleVerdictChange = useCallback(
-    async (responseId: string, verdict: ResponseVerdict) => {
-      if (isReadOnly || !guardVerdictInteraction()) return
+  const persistVerdict = useCallback(
+    async (
+      responseId: string,
+      verdict: ResponseVerdict,
+      expert_observations: string | null,
+    ) => {
+      const previous = responsesRef.current.find((r) => r.id === responseId)
+      if (!previous) return
 
-      const previous =
-        responsesRef.current.find((r) => r.id === responseId)?.verdict ?? null
-      patchResponse(responseId, { verdict })
+      patchResponse(responseId, { verdict, expert_observations })
 
       try {
-        const updated = await evaluationsApi.updateVerdict(responseId, verdict)
+        const updated = await evaluationsApi.updateVerdict(responseId, {
+          verdict,
+          expert_observations,
+        })
+        draft.clearDraft(responseId)
         patchResponse(responseId, updated)
-      } catch {
-        toastError('No se pudo guardar el veredicto.')
-        patchResponse(responseId, { verdict: previous })
+      } catch (err: unknown) {
+        patchResponse(responseId, {
+          verdict: previous.verdict,
+          expert_observations: previous.expert_observations,
+        })
+        draft.clearDraft(responseId)
+        const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail
+        toastError(
+          typeof detail === 'string' ? detail : 'No se pudo guardar el veredicto.',
+        )
       }
     },
-    [isReadOnly, guardVerdictInteraction, patchResponse],
+    [patchResponse, draft],
   )
 
-  return handleVerdictChange
+  const handleVerdictChange = useCallback(
+    (responseId: string, verdict: ResponseVerdict) => {
+      if (isReadOnly || !guardVerdictInteraction()) return
+
+      if (verdict === 'complies') {
+        draft.clearDebounce(responseId)
+        draft.clearDraft(responseId)
+        void persistVerdict(responseId, 'complies', null)
+        return
+      }
+
+      if (verdictRequiresExpertObservations(verdict)) {
+        draft.setPendingVerdict(responseId, verdict)
+        patchResponse(responseId, { verdict })
+
+        const response = responsesRef.current.find((r) => r.id === responseId)
+        if (!response) return
+
+        const text = draft.getObservationsValue(response)
+        if (text.trim()) {
+          draft.scheduleDebouncedSave(responseId, () => {
+            void persistVerdict(responseId, verdict, text)
+          })
+        }
+      }
+    },
+    [isReadOnly, guardVerdictInteraction, draft, persistVerdict, patchResponse],
+  )
+
+  const handleExpertObservationsChange = useCallback(
+    (responseId: string, text: string) => {
+      if (isReadOnly || !guardVerdictInteraction()) return
+
+      const response = responsesRef.current.find((r) => r.id === responseId)
+      if (!response) return
+
+      const verdict = draft.getDisplayVerdict(response)
+      if (!verdictRequiresExpertObservations(verdict)) return
+
+      draft.setDraftText(responseId, text)
+      draft.scheduleDebouncedSave(responseId, () => {
+        if (!text.trim()) return
+        void persistVerdict(responseId, verdict!, text)
+      })
+    },
+    [isReadOnly, guardVerdictInteraction, draft, persistVerdict],
+  )
+
+  const flushExpertObservations = useCallback(
+    (responseId: string) => {
+      draft.clearDebounce(responseId)
+      const response = responsesRef.current.find((r) => r.id === responseId)
+      if (!response) return
+
+      const verdict = draft.getDisplayVerdict(response)
+      if (!verdictRequiresExpertObservations(verdict)) return
+
+      const text = draft.getObservationsValue(response)
+      if (!text.trim()) return
+
+      void persistVerdict(responseId, verdict!, text)
+    },
+    [draft, persistVerdict],
+  )
+
+  return {
+    handleVerdictChange,
+    handleExpertObservationsChange,
+    flushExpertObservations,
+    getDisplayVerdict: draft.getDisplayVerdict,
+    getObservationsValue: draft.getObservationsValue,
+  }
 }

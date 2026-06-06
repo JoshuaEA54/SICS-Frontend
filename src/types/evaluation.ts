@@ -20,6 +20,7 @@ export interface Response {
   observations: string | null
   answered_at: string
   verdict: ResponseVerdict | null
+  expert_observations: string | null
 }
 
 export interface ReviewProgress {

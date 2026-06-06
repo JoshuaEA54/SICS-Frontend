@@ -1,13 +1,33 @@
 import { type ControlGroup } from '@/types/controls'
-import { type Evaluation, type Response, type ReviewProgress } from '@/types/evaluation'
+import { type Evaluation, type Response, type ResponseVerdict, type ReviewProgress } from '@/types/evaluation'
+
+const VERDICTS_REQUIRING_EXPERT_OBSERVATIONS = new Set<ResponseVerdict>([
+  'complies_with_observations',
+  'does_not_comply',
+])
+
+export function verdictRequiresExpertObservations(
+  verdict: ResponseVerdict | null | undefined,
+): boolean {
+  return verdict != null && VERDICTS_REQUIRING_EXPERT_OBSERVATIONS.has(verdict)
+}
 
 export function requiresExpertVerdict(response: Response): boolean {
   return response.answer === true
 }
 
+export function isResponseReviewComplete(response: Response): boolean {
+  if (!requiresExpertVerdict(response)) return true
+  if (response.verdict === null) return false
+  if (verdictRequiresExpertObservations(response.verdict)) {
+    return Boolean(response.expert_observations?.trim())
+  }
+  return true
+}
+
 export function computeReviewProgress(responses: Response[]): ReviewProgress {
   const required = responses.filter(requiresExpertVerdict)
-  const completed = required.filter((r) => r.verdict !== null)
+  const completed = required.filter(isResponseReviewComplete)
   return { completed: completed.length, required: required.length }
 }
 
@@ -21,7 +41,7 @@ export function countGroupVerdicts(
     const r = responsesByControlId[control.id]
     if (!r || !requiresExpertVerdict(r)) continue
     required += 1
-    if (r.verdict !== null) completed += 1
+    if (isResponseReviewComplete(r)) completed += 1
   }
   return { completed, required }
 }
@@ -59,10 +79,6 @@ export function isGroupReviewAdvanceable(
   if (group.controls.length === 0) return false
   if (!hasAllGroupResponses(group, responsesByControlId)) return false
   return countPendingVerdictsInGroup(group, responsesByControlId) === 0
-}
-
-export function hasPendingVerdicts(responses: Response[]): boolean {
-  return responses.some((r) => requiresExpertVerdict(r) && r.verdict === null)
 }
 
 export function canFinalizeEvaluation(

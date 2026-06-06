@@ -43,7 +43,13 @@ export function useExpertReview() {
     responsesByControlId,
   );
 
-  const handleVerdictChange = useExpertVerdictHandlers({
+  const {
+    handleVerdictChange,
+    handleExpertObservationsChange,
+    flushExpertObservations,
+    getDisplayVerdict,
+    getObservationsValue,
+  } = useExpertVerdictHandlers({
     responses,
     setResponses,
     isReadOnly,
@@ -99,6 +105,10 @@ export function useExpertReview() {
     canFinalize,
     isGroupCompleted,
     handleVerdictChange,
+    handleExpertObservationsChange,
+    flushExpertObservations,
+    getDisplayVerdict,
+    getObservationsValue,
     requestFinalize,
     handleFinalize,
     finalizeConfirmOpen,

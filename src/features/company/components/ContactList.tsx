@@ -21,7 +21,7 @@ export function ContactList({ contacts, onRemove }: ContactListProps) {
             <Avatar
               name={c.name}
               size="sm"
-              className="bg-[#dbeafe] !text-[#1d4ed8]"
+              className="bg-[#dbeafe]"
             />
           </div>
           <div className="min-w-0 flex-1">

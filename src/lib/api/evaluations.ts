@@ -88,9 +88,12 @@ export const evaluationsApi = {
   updateLastGroup: (evaluationId: string, lastGroupId: string) =>
     apiClient.patch(`/evaluations/${evaluationId}/last-group`, { last_group_id: lastGroupId }),
 
-  updateVerdict: (responseId: string, verdict: ResponseVerdict) =>
+  updateVerdict: (
+    responseId: string,
+    data: { verdict: ResponseVerdict; expert_observations?: string | null },
+  ) =>
     apiClient
-      .patch<Response>(`/evaluations/responses/${responseId}/verdict`, { verdict })
+      .patch<Response>(`/evaluations/responses/${responseId}/verdict`, data)
       .then((r) => r.data),
 
   finalizeReview: (evaluationId: string) =>

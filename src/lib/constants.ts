@@ -19,3 +19,6 @@ export const COMPANY_NAME_MAX_LENGTH = 200
 
 /** Longitud máxima de `responses.observations` — ResponseUpsert (Pydantic max_length=500). */
 export const RESPONSE_OBSERVATIONS_MAX_LENGTH = 500
+
+/** Debounce al guardar respuestas/veredictos (empresa + experto). */
+export const RESPONSE_SAVE_DEBOUNCE_MS = 600

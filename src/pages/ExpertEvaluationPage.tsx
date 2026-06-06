@@ -34,6 +34,10 @@ export function ExpertEvaluationPage() {
     groupProgress,
     isGroupCompleted,
     handleVerdictChange,
+    handleExpertObservationsChange,
+    flushExpertObservations,
+    getDisplayVerdict,
+    getObservationsValue,
     requestFinalize,
     handleFinalize,
     finalizeConfirmOpen,
@@ -130,18 +134,25 @@ export function ExpertEvaluationPage() {
                 <p className="text-sm text-text-muted">Cargando evidencias…</p>
               )}
 
-              {currentGroup.controls.map((control) => (
-                <ExpertControlCard
-                  key={control.id}
-                  control={control}
-                  response={responsesByControlId[control.id]}
-                  evidence={getEvidenceForControl(control.id)}
-                  readOnly={isReadOnly}
-                  onVerdictChange={handleVerdictChange}
-                  onPreviewEvidence={openPreview}
-                  onDownloadEvidence={downloadEvidence}
-                />
-              ))}
+              {currentGroup.controls.map((control) => {
+                const response = responsesByControlId[control.id]
+                return (
+                  <ExpertControlCard
+                    key={control.id}
+                    control={control}
+                    response={response}
+                    evidence={getEvidenceForControl(control.id)}
+                    readOnly={isReadOnly}
+                    displayVerdict={response ? getDisplayVerdict(response) : null}
+                    observationsValue={response ? getObservationsValue(response) : ''}
+                    onVerdictChange={handleVerdictChange}
+                    onObservationsChange={handleExpertObservationsChange}
+                    onObservationsBlur={flushExpertObservations}
+                    onPreviewEvidence={openPreview}
+                    onDownloadEvidence={downloadEvidence}
+                  />
+                )
+              })}
 
               <ExpertReviewFooter
                 isFirstGroup={isFirstGroup}
