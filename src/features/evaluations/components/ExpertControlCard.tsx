@@ -10,7 +10,11 @@ interface ExpertControlCardProps {
   response: Response | undefined
   evidence: Evidence[]
   readOnly: boolean
+  displayVerdict: ResponseVerdict | null
+  observationsValue: string
   onVerdictChange: (responseId: string, verdict: ResponseVerdict) => void
+  onObservationsChange: (responseId: string, text: string) => void
+  onObservationsBlur: (responseId: string) => void
   onPreviewEvidence: (evidence: Evidence) => void
   onDownloadEvidence: (evidence: Evidence) => void
 }
@@ -20,7 +24,11 @@ export function ExpertControlCard({
   response,
   evidence,
   readOnly,
+  displayVerdict,
+  observationsValue,
   onVerdictChange,
+  onObservationsChange,
+  onObservationsBlur,
   onPreviewEvidence,
   onDownloadEvidence,
 }: ExpertControlCardProps) {
@@ -49,7 +57,11 @@ export function ExpertControlCard({
           <ExpertVerdictField
             response={response}
             readOnly={readOnly}
+            displayVerdict={displayVerdict}
+            observationsValue={observationsValue}
             onVerdictChange={onVerdictChange}
+            onObservationsChange={onObservationsChange}
+            onObservationsBlur={onObservationsBlur}
           />
         </>
       )}

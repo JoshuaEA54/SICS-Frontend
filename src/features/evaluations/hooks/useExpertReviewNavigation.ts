@@ -2,14 +2,17 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { type ControlGroup } from '@/types/controls'
 import { type Response } from '@/types/evaluation'
 import {
+  buildExpertReviewUi,
   countPendingVerdictsInGroup,
   findActiveGroupIndex,
+  type ExpertVerdictDraftSource,
 } from '@/features/evaluations/expertReview'
 import { toastError } from '@/store/toastStore'
 
 export function useExpertReviewNavigation(
   groups: ControlGroup[],
   responsesByControlId: Record<string, Response | undefined>,
+  draft: ExpertVerdictDraftSource,
 ) {
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0)
   const currentGroupIndexRef = useRef(0)
@@ -20,9 +23,17 @@ export function useExpertReviewNavigation(
   const responsesRef = useRef(responsesByControlId)
   responsesRef.current = responsesByControlId
 
+  const draftRef = useRef(draft)
+  draftRef.current = draft
+
+  const ui = useMemo(
+    () => buildExpertReviewUi(draft),
+    [draft.getDisplayVerdict, draft.getObservationsValue],
+  )
+
   const activeGroupIndex = useMemo(
-    () => findActiveGroupIndex(groups, responsesByControlId),
-    [groups, responsesByControlId],
+    () => findActiveGroupIndex(groups, responsesByControlId, ui),
+    [groups, responsesByControlId, ui],
   )
 
   const goToGroup = useCallback((index: number) => {
@@ -35,7 +46,11 @@ export function useExpertReviewNavigation(
   const goNext = useCallback(() => {
     const group = groupsRef.current[currentGroupIndexRef.current]
     const pending = group
-      ? countPendingVerdictsInGroup(group, responsesRef.current)
+      ? countPendingVerdictsInGroup(
+          group,
+          responsesRef.current,
+          buildExpertReviewUi(draftRef.current),
+        )
       : 0
     if (pending > 0) {
       toastError(
