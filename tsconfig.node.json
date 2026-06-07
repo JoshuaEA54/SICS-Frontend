@@ -15,7 +15,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "jsx": "react-jsx",
+    "jsx": "react",
     "types": ["node"]
   },
   "include": ["vite.config.ts", "scripts/**/*.mts", "src/emails/**/*"]

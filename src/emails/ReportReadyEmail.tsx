@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {
   Body,
   Button,
@@ -5,7 +6,6 @@ import {
   Container,
   Head,
   Heading,
-  Hr,
   Html,
   Img,
   Preview,
@@ -16,6 +16,7 @@ import {
 import { emailTokens } from './tokens'
 
 export interface ReportReadyEmailProps {
+  evaluationId: string
   companyName: string
   compliancePercentage: number
   complianceLabel: string
@@ -27,6 +28,7 @@ export interface ReportReadyEmailProps {
 }
 
 export function ReportReadyEmail({
+  evaluationId,
   companyName,
   compliancePercentage,
   complianceLabel,
@@ -39,8 +41,24 @@ export function ReportReadyEmail({
   return (
     <Html>
       <Head />
-      <Preview>Informe SICS listo: {companyName}</Preview>
+      <Preview>
+        Informe SICS para {companyName}, revisado el {reviewedAt}
+      </Preview>
       <Body style={{ backgroundColor: emailTokens.surfaceBg, fontFamily: 'Arial, sans-serif', margin: 0 }}>
+        <Text
+          style={{
+            color: emailTokens.surfaceBg,
+            display: 'none',
+            fontSize: '1px',
+            lineHeight: '1px',
+            maxHeight: 0,
+            maxWidth: 0,
+            opacity: 0,
+            overflow: 'hidden',
+          }}
+        >
+          {evaluationId}
+        </Text>
         <Container
           style={{
             backgroundColor: emailTokens.surface,
@@ -109,16 +127,16 @@ export function ReportReadyEmail({
               display: 'inline-block',
               fontSize: '14px',
               fontWeight: 600,
+              marginBottom: '24px',
               padding: '12px 24px',
               textDecoration: 'none',
             }}
           >
-            Ver mis evaluaciones
+            Ver evaluaciones de {companyName}
           </Button>
 
-          <Hr style={{ borderColor: emailTokens.border, margin: '28px 0 16px' }} />
           <Text style={{ color: emailTokens.textMuted, fontSize: '12px', lineHeight: '18px', margin: 0 }}>
-            SICS: Sistema Integrado de Cumplimiento en Seguridad.
+            SICS · Informe {evaluationId.slice(0, 8)} · {companyName} · {reviewedAt}
           </Text>
         </Container>
       </Body>
