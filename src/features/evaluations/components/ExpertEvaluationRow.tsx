@@ -1,22 +1,26 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { EvaluationBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { ArrowRightIcon, CheckSmIcon, ClockIcon } from '@/components/ui/Icons'
 import { ComplianceScore } from '@/features/evaluations/components/ComplianceScore'
-import { ReportActionButton } from '@/features/evaluations/components/ReportActionButton'
+import { ReportDeliveryButton } from '@/features/evaluations/components/ReportDeliveryButton'
+import { ReportDeliveryModal } from '@/features/evaluations/components/ReportDeliveryModal'
 import { ReportPreviewModal } from '@/features/evaluations/components/ReportPreviewModal'
 import { useReportPreview } from '@/features/evaluations/hooks/useReportPreview'
+import { type ReportStatusPatch } from '@/features/evaluations/hooks/useReportStatusPolling'
 import { getComplianceBand, getComplianceStyles } from '@/features/evaluations/complianceDisplay'
 import { formatDate } from '@/lib/utils'
-import { type EvaluationSummary, type ReportStatus } from '@/types/evaluation'
+import { type EvaluationSummary } from '@/types/evaluation'
 
 interface ExpertEvaluationRowProps {
   evaluation: EvaluationSummary
-  onReportStatusChange?: (id: string, status: ReportStatus) => void
+  onEvaluationPatch: (id: string, patch: ReportStatusPatch) => void
 }
 
-export function ExpertEvaluationRow({ evaluation, onReportStatusChange }: ExpertEvaluationRowProps) {
+export function ExpertEvaluationRow({ evaluation, onEvaluationPatch }: ExpertEvaluationRowProps) {
   const navigate = useNavigate()
+  const [deliveryOpen, setDeliveryOpen] = useState(false)
   const isPending = evaluation.status === 'submitted'
   const isReviewed = evaluation.status === 'reviewed'
 
@@ -31,7 +35,11 @@ export function ExpertEvaluationRow({ evaluation, onReportStatusChange }: Expert
   } = useReportPreview()
 
   const handleAction = () => navigate(`/evaluaciones/${evaluation.id}`)
-  const handleOpenReport = () => openReport(evaluation)
+  const handleOpenDelivery = () => setDeliveryOpen(true)
+  const handlePreviewFromDelivery = () => {
+    setDeliveryOpen(false)
+    void openReport(evaluation)
+  }
 
   const companyLabel = evaluation.company_name ?? evaluation.company_id
   const band =
@@ -51,33 +59,28 @@ export function ExpertEvaluationRow({ evaluation, onReportStatusChange }: Expert
   return (
     <>
       <div className="relative overflow-hidden rounded-[14px] border border-border bg-white shadow-[0px_4px_20px_0px_rgba(26,26,46,0.08)]">
-        {/* Accent bar — amber when pending, blue when reviewed */}
         <div
           className={`absolute inset-x-0 top-0 h-[3px] ${isPending ? 'bg-amber/70' : 'bg-primary/70'}`}
         />
 
         <div className="flex items-start gap-6 px-6 pb-5 pt-[22px]">
-          {/* ── Left column ── */}
           <div className="flex min-w-0 flex-1 flex-col gap-[10px]">
-            {/* Label + badge */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="truncate text-md font-normal text-text-primary tracking-wide">
                 {companyLabel}
                 {evaluation.sector_name && (
                   <span className="text-sm font-normal text-text-subtle">
-                    {" " + " · " + evaluation.sector_name}
+                    {' ' + ' · ' + evaluation.sector_name}
                   </span>
                 )}
               </span>
               <EvaluationBadge status={isPending ? 'submitted' : 'reviewed'} />
             </div>
 
-            {/* Title */}
             <h2 className="font-display text-lg font-semibold leading-[22px] tracking-[-0.28px] text-text-primary">
               {isPending ? companyLabel : bandLabel}
             </h2>
 
-            {/* Dates row */}
             <p className="text-[12.8px] font-light leading-[19.2px] text-text-muted">
               {evaluation.submitted_at && (
                 <span>Enviada el {formatDate(evaluation.submitted_at)}</span>
@@ -88,9 +91,14 @@ export function ExpertEvaluationRow({ evaluation, onReportStatusChange }: Expert
                   Revisada el {formatDate(evaluation.reviewed_at)}
                 </span>
               )}
+              {evaluation.report_email_sent_at && (
+                <span className="text-[#b0aaa0]">
+                  {' · '}
+                  Informe enviado el {formatDate(evaluation.report_email_sent_at)}
+                </span>
+              )}
             </p>
 
-            {/* Progress pill — pending */}
             {hasProgress && evaluation.review_progress && (
               <div className="flex w-fit items-center gap-1.5 rounded-[7px] bg-surface-bg px-3 py-2">
                 <span className="text-amber">
@@ -107,7 +115,6 @@ export function ExpertEvaluationRow({ evaluation, onReportStatusChange }: Expert
               </div>
             )}
 
-            {/* Controls stat pill — reviewed */}
             {isReviewed && hasStats && (
               <div className="flex w-fit items-center gap-1.5 rounded-[7px] bg-surface-bg px-3 py-2">
                 <span className="text-teal">
@@ -125,23 +132,16 @@ export function ExpertEvaluationRow({ evaluation, onReportStatusChange }: Expert
             )}
           </div>
 
-          {/* ── Right column ── */}
           <div className="flex shrink-0 flex-col items-end gap-3.5">
-            {/* Ring — only when reviewed */}
             {isReviewed && evaluation.compliance_percentage != null && band ? (
               <ComplianceScore percentage={evaluation.compliance_percentage} size="md" />
             ) : (
               <div className="size-[80px]" />
             )}
 
-            {/* Action buttons */}
             <div className="flex items-center gap-2">
               {isReviewed && (
-                <ReportActionButton
-                  evaluation={evaluation}
-                  onReportStatusChange={onReportStatusChange}
-                  onOpenReport={handleOpenReport}
-                />
+                <ReportDeliveryButton evaluation={evaluation} onClick={handleOpenDelivery} />
               )}
               <Button
                 variant="primary"
@@ -155,6 +155,14 @@ export function ExpertEvaluationRow({ evaluation, onReportStatusChange }: Expert
           </div>
         </div>
       </div>
+
+      <ReportDeliveryModal
+        open={deliveryOpen}
+        evaluation={evaluation}
+        onClose={() => setDeliveryOpen(false)}
+        onPreviewReport={handlePreviewFromDelivery}
+        onPatch={onEvaluationPatch}
+      />
 
       <ReportPreviewModal
         open={reportOpen}

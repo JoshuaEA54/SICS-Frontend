@@ -44,6 +44,9 @@ export interface Evaluation {
   review_progress?: ReviewProgress | null
   report_status?: ReportStatus | null
   report_generated_at?: string | null
+  report_error?: string | null
+  report_email_sent_at?: string | null
+  report_email_sent_to?: string[] | null
 }
 
 export interface EvaluationSummary {
@@ -61,4 +64,17 @@ export interface EvaluationSummary {
   review_progress?: ReviewProgress | null
   report_status?: ReportStatus | null
   report_generated_at?: string | null
+  report_error?: string | null
+  report_email_sent_at?: string | null
+  report_email_sent_to?: string[] | null
+}
+
+export interface ReportRecipient {
+  email: string
+  label: string
+}
+
+export interface SendReportResponse {
+  sent_at: string
+  sent_to: string[]
 }

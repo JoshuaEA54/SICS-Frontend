@@ -6,6 +6,8 @@ import {
   type Response,
   type ResponseVerdict,
   type Evidence,
+  type ReportRecipient,
+  type SendReportResponse,
 } from '@/types/evaluation'
 import { type PaginatedResponse } from '@/types/api'
 import { API_MAX_PAGE_SIZE } from '@/lib/constants'
@@ -114,5 +116,15 @@ export const evaluationsApi = {
   regenerateReport: (evaluationId: string) =>
     apiClient
       .post<Evaluation>(`/evaluations/${evaluationId}/regenerate-report`)
+      .then((r) => r.data),
+
+  getReportRecipients: (evaluationId: string) =>
+    apiClient
+      .get<{ recipients: ReportRecipient[] }>(`/evaluations/${evaluationId}/report-recipients`)
+      .then((r) => r.data.recipients),
+
+  sendReport: (evaluationId: string) =>
+    apiClient
+      .post<SendReportResponse>(`/evaluations/${evaluationId}/send-report`)
       .then((r) => r.data),
 }
