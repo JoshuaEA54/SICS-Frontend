@@ -22,3 +22,6 @@ export const RESPONSE_OBSERVATIONS_MAX_LENGTH = 500
 
 /** Debounce al guardar respuestas/veredictos (empresa + experto). */
 export const RESPONSE_SAVE_DEBOUNCE_MS = 600
+
+/** Polling del estado del PDF en bandeja experto mientras report_status = generating */
+export const REPORT_STATUS_POLL_MS = 3000

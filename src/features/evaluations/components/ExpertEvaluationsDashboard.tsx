@@ -1,10 +1,8 @@
-import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Pagination } from '@/components/ui/Pagination'
 import { ExpertFiltersBar } from '@/features/evaluations/components/ExpertFiltersBar'
 import { ExpertEvaluationRow } from '@/features/evaluations/components/ExpertEvaluationRow'
-import { useExpertEvaluationsInbox } from '@/features/evaluations/hooks/useExpertEvaluationsInbox'
-import { type ReportStatus } from '@/types/evaluation'
+import { useExpertEvaluationsDashboard } from '@/features/evaluations/hooks/useExpertEvaluationsDashboard'
 
 export function ExpertEvaluationsDashboard() {
   const {
@@ -23,14 +21,8 @@ export function ExpertEvaluationsDashboard() {
     activeFilters,
     rangeStart,
     rangeEnd,
-  } = useExpertEvaluationsInbox()
-
-  // Local overrides for report_status after Reintentar (avoids full reload)
-  const [reportStatusOverrides, setReportStatusOverrides] = useState<Record<string, ReportStatus>>({})
-
-  const handleReportStatusChange = useCallback((id: string, status: ReportStatus) => {
-    setReportStatusOverrides((prev) => ({ ...prev, [id]: status }))
-  }, [])
+    patchEvaluation,
+  } = useExpertEvaluationsDashboard()
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-10">
@@ -98,12 +90,8 @@ export function ExpertEvaluationsDashboard() {
             {items.map((evaluation) => (
               <ExpertEvaluationRow
                 key={evaluation.id}
-                evaluation={
-                  reportStatusOverrides[evaluation.id]
-                    ? { ...evaluation, report_status: reportStatusOverrides[evaluation.id] }
-                    : evaluation
-                }
-                onReportStatusChange={handleReportStatusChange}
+                evaluation={evaluation}
+                onEvaluationPatch={patchEvaluation}
               />
             ))}
           </div>
