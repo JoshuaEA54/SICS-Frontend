@@ -19,12 +19,12 @@ function getUser(): User | null {
   }
 }
 
-// Solo para usuarios en paso 1: sin empresa aún
+// Solo para usuarios en paso 1: sin empresa aún, o con empresa pero sin cargo
+// (entre el paso 1 y el paso 2 - se les permite seguir editando su empresa)
 function requireStep1() {
   const user = getUser()
   if (!user) return redirect('/')
   if (user.job_title) return redirect('/evaluaciones')
-  if (user.company_id) return redirect('/registro/paso-2')
   return null
 }
 

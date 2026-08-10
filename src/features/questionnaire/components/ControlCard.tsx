@@ -1,5 +1,6 @@
 import { ControlCardMeta } from '@/components/shared/ControlCardMeta'
 import { CheckSmIcon, XIcon } from '@/components/ui/Icons'
+import { Textarea } from '@/components/ui/Textarea'
 import { RESPONSE_OBSERVATIONS_MAX_LENGTH } from '@/lib/constants'
 import { type Control } from '@/types/controls'
 import { type ResponseState } from '../hooks/useQuestionnaire'
@@ -65,27 +66,14 @@ export function ControlCard({
       )}
 
       {/* Observations */}
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-baseline justify-between">
-          <label className="text-[12px] font-medium text-[#44445a]">
-            Observaciones{' '}
-            <span className="font-light text-text-muted">(opcional)</span>
-          </label>
-          <span
-            className={`text-[11px] tabular-nums ${observations.length >= RESPONSE_OBSERVATIONS_MAX_LENGTH ? 'text-red-500' : 'text-text-muted'}`}
-          >
-            {observations.length} / {RESPONSE_OBSERVATIONS_MAX_LENGTH}
-          </span>
-        </div>
-        <textarea
-          value={observations}
-          onChange={(e) => onObservationsChange(e.target.value)}
-          placeholder="Notas adicionales, contexto o aclaraciones…"
-          maxLength={RESPONSE_OBSERVATIONS_MAX_LENGTH}
-          rows={3}
-          className="w-full resize-none rounded-[7px] border border-border bg-surface-bg px-[13.4px] py-[9.4px] text-[13.2px] font-light text-text-primary placeholder:text-text-primary/50 transition-colors focus:border-primary focus:bg-white focus:outline-none"
-        />
-      </div>
+      <Textarea
+        label="Observaciones"
+        showCharCount
+        maxLength={RESPONSE_OBSERVATIONS_MAX_LENGTH}
+        value={observations}
+        onChange={(e) => onObservationsChange(e.target.value)}
+        placeholder="Notas adicionales, contexto o aclaraciones…"
+      />
     </div>
   )
 }

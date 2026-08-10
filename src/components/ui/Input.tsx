@@ -4,8 +4,9 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   required?: boolean
   helperText?: string
-  error?: string
+  error?: string | boolean
   leftElement?: ReactNode
+  showCharCount?: boolean
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
@@ -15,8 +16,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     helperText,
     error,
     leftElement,
+    showCharCount,
     className = '',
     id: idProp,
+    value,
+    defaultValue,
+    onChange,
+    maxLength,
     ...props
   },
   ref,
@@ -24,13 +30,32 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const generatedId = useId()
   const id = idProp ?? generatedId
 
+  const currentValue = typeof value === 'string' ? value : ''
+  const isEmpty = currentValue.trim().length === 0
+
+  const showRequiredHint = Boolean(required) && isEmpty
+  const invalid = Boolean(error) || showRequiredHint
+
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={id} className="text-[12.8px] font-medium text-text-primary">
-          {label}
-          {required && <span className="ml-0.5 text-primary">*</span>}
-        </label>
+        <div className="flex items-baseline justify-between">
+          <label htmlFor={id} className="flex items-baseline gap-1.5">
+            <span className="text-[12.8px] font-medium text-text-primary">{label}</span>
+            {showRequiredHint && (
+              <span className="text-[10px] font-semibold text-red-500">REQUERIDO *</span>
+            )}
+          </label>
+          {showCharCount && maxLength !== undefined && (
+            <span
+              className={`text-[11px] tabular-nums ${
+                currentValue.length >= maxLength ? 'text-red-500' : 'text-text-muted'
+              }`}
+            >
+              {currentValue.length} / {maxLength}
+            </span>
+          )}
+        </div>
       )}
       <div className="relative">
         {leftElement && (
@@ -41,14 +66,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         <input
           ref={ref}
           id={id}
-          className={`w-full rounded-[7px] border bg-surface-bg px-[13.4px] py-[9.4px] text-sm font-light text-text-primary placeholder:text-text-muted/50 transition-colors focus:border-primary focus:bg-white focus:outline-none ${error ? 'border-red-400' : 'border-border'} ${leftElement ? 'pl-9' : ''} ${className}`}
+          value={value}
+          defaultValue={defaultValue}
+          maxLength={maxLength}
+          onChange={onChange}
+          className={`w-full rounded-[7px] border bg-surface-bg px-[13.4px] py-[9.4px] text-sm font-light text-text-primary placeholder:text-text-muted/50 transition-colors focus:bg-white focus:outline-none ${invalid ? 'border-red-400 focus:border-red-400' : 'border-border focus:border-primary'} ${leftElement ? 'pl-9' : ''} ${className}`}
           {...props}
         />
       </div>
-      {helperText && !error && (
+      {helperText && !invalid && (
         <p className="text-[11.5px] text-text-muted">{helperText}</p>
       )}
-      {error && <p className="text-[11.5px] text-red-500">{error}</p>}
+      {typeof error === 'string' && error && <p className="text-[11.5px] text-red-500">{error}</p>}
     </div>
   )
 })

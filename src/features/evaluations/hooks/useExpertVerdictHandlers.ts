@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { verdictRequiresExpertObservations } from '@/features/evaluations/expertReview'
 import { type ExpertVerdictDraft } from '@/features/evaluations/hooks/useExpertVerdictDraft'
 import { evaluationsApi } from '@/lib/api/evaluations'
+import { apiErrorMessage } from '@/lib/apiError'
 import { type Response, type ResponseVerdict } from '@/types/evaluation'
 import { toastError } from '@/store/toastStore'
 
@@ -55,17 +56,13 @@ export function useExpertVerdictHandlers({
         })
         draft.clearDraft(responseId)
         patchResponse(responseId, updated)
-      } catch (err: unknown) {
+      } catch (err) {
         patchResponse(responseId, {
           verdict: previous.verdict,
           expert_observations: previous.expert_observations,
         })
         draft.clearDraft(responseId)
-        const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data
-          ?.detail
-        toastError(
-          typeof detail === 'string' ? detail : 'No se pudo guardar el veredicto.',
-        )
+        toastError(apiErrorMessage(err, 'No se pudo guardar el veredicto.'))
       }
     },
     [patchResponse, draft],

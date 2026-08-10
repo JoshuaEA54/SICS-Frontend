@@ -13,9 +13,7 @@ export interface Step1PersistedData {
 }
 
 interface RegisterStore {
-  companyId: string | null;
   step1Data: Step1PersistedData | null;
-  setCompanyId: (id: string) => void;
   setStep1Data: (data: Step1PersistedData) => void;
   clear: () => void;
 }
@@ -23,11 +21,9 @@ interface RegisterStore {
 export const useRegisterStore = create<RegisterStore>()(
   persist(
     (set) => ({
-      companyId: null,
       step1Data: null,
-      setCompanyId: (id) => set({ companyId: id }),
       setStep1Data: (data) => set({ step1Data: data }),
-      clear: () => set({ companyId: null, step1Data: null }),
+      clear: () => set({ step1Data: null }),
     }),
     { name: "sics-register" },
   ),

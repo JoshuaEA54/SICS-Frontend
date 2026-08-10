@@ -29,7 +29,7 @@ export function ExpertVerdictField({
   if (!requiresExpertVerdict(response)) {
     return (
       <p className="rounded-[8px] border border-border bg-surface-alt px-4 py-3 text-[13px] text-text-secondary">
-        La empresa indicó que no cumple — no requiere veredicto del experto.
+        La empresa indicó que no cumple - no requiere veredicto del experto.
       </p>
     )
   }

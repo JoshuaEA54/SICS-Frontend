@@ -12,7 +12,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   required?: boolean
   options: SelectOption[]
   placeholder?: string
-  error?: string
+  error?: string | boolean
   helperText?: string
 }
 
@@ -26,6 +26,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
     helperText,
     className = '',
     id: idProp,
+    value,
+    defaultValue,
+    onChange,
     ...props
   },
   ref,
@@ -33,19 +36,29 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   const generatedId = useId()
   const id = idProp ?? generatedId
 
+  const isEmpty = typeof value !== 'string' || value.trim().length === 0
+
+  const showRequiredHint = Boolean(required) && isEmpty
+  const invalid = Boolean(error) || showRequiredHint
+
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={id} className="text-[12.8px] font-medium text-text-primary">
-          {label}
-          {required && <span className="ml-0.5 text-primary">*</span>}
+        <label htmlFor={id} className="flex items-baseline gap-1.5">
+          <span className="text-[12.8px] font-medium text-text-primary">{label}</span>
+          {showRequiredHint && (
+            <span className="text-[10px] font-semibold text-red-500">REQUERIDO *</span>
+          )}
         </label>
       )}
       <div className="relative">
         <select
           ref={ref}
           id={id}
-          className={`w-full appearance-none rounded-[7px] border bg-surface-bg px-[13.4px] py-[9.4px] pr-8 text-sm font-light text-text-primary transition-colors focus:border-primary focus:bg-white focus:outline-none ${error ? 'border-red-400' : 'border-border'} ${className}`}
+          value={value}
+          defaultValue={defaultValue}
+          onChange={onChange}
+          className={`w-full appearance-none rounded-[7px] border bg-surface-bg px-[13.4px] py-[9.4px] pr-8 text-sm font-light text-text-primary transition-colors focus:bg-white focus:outline-none ${invalid ? 'border-red-400 focus:border-red-400' : 'border-border focus:border-primary'} ${className}`}
           {...props}
         >
           {placeholder && (
@@ -64,10 +77,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
           <ChevronDownIcon />
         </span>
       </div>
-      {helperText && !error && (
+      {helperText && !invalid && (
         <p className="text-[11.5px] text-text-muted">{helperText}</p>
       )}
-      {error && <p className="text-[11.5px] text-red-500">{error}</p>}
+      {typeof error === 'string' && error && <p className="text-[11.5px] text-red-500">{error}</p>}
     </div>
   )
 })

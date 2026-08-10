@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { evaluationsApi } from "@/lib/api/evaluations";
+import { apiErrorMessage } from "@/lib/apiError";
 import {
   buildExpertReviewUi,
   canFinalizeEvaluation,
@@ -79,10 +80,8 @@ export function useExpertFinalize({
       setFinalizeConfirmOpen(false);
       toastSuccess("Revisión cerrada. El informe se está generando en segundo plano.");
       navigate("/evaluaciones");
-    } catch (err: unknown) {
-      const detail = (err as { response?: { data?: { detail?: string } } })
-        ?.response?.data?.detail;
-      toastError(detail ?? "No se pudo cerrar la revisión.");
+    } catch (err) {
+      toastError(apiErrorMessage(err, "No se pudo cerrar la revisión."));
     } finally {
       setFinalizing(false);
     }

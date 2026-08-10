@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react'
 import { evaluationsApi } from '@/lib/api/evaluations'
+import { apiErrorMessage } from '@/lib/apiError'
 import { RESPONSE_SAVE_DEBOUNCE_MS } from '@/lib/constants'
 import { toastError } from '@/store/toastStore'
 import { type ResponseState } from './useQuestionnaire'
@@ -78,9 +79,8 @@ export function useResponseHandlers(
             evidence: [...(p[controlId]?.evidence ?? []), ...uploaded],
           },
         }))
-      } catch (err: unknown) {
-        const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail
-        toastError(detail ?? 'No se pudo subir el archivo.')
+      } catch (err) {
+        toastError(apiErrorMessage(err, 'No se pudo subir el archivo.'))
       }
     },
     [responsesMapRef, setResponsesMap],

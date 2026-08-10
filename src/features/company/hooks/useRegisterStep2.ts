@@ -29,6 +29,7 @@ export function useRegisterStep2() {
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterStep2FormValues>({
@@ -109,6 +110,7 @@ export function useRegisterStep2() {
 
   return {
     register,
+    control,
     errors,
     isSubmitting,
     onSubmit,

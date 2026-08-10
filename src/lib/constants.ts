@@ -17,6 +17,12 @@ export const SEARCH_DEBOUNCE_MS = 500
 /** Longitud máxima de `companies.name` en BD (String(200)). El registro usa max 100 en formulario. */
 export const COMPANY_NAME_MAX_LENGTH = 200
 
+/** Longitud máxima de `control_groups.name` en BD (String(200)). El formulario usa max 100. */
+export const CONTROL_GROUP_NAME_MAX_LENGTH = 100
+
+/** `control_groups.description` es `Text` (sin límite en BD) — tope de seguridad solo en la UI, sin contador. */
+export const CONTROL_GROUP_DESCRIPTION_MAX_LENGTH = 1000
+
 /** Longitud máxima de `responses.observations` — ResponseUpsert (Pydantic max_length=500). */
 export const RESPONSE_OBSERVATIONS_MAX_LENGTH = 500
 

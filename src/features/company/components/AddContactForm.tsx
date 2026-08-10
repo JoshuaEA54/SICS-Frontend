@@ -33,6 +33,7 @@ export function AddContactForm({
       <div className="flex flex-col gap-3">
         <Input
           label="Nombre completo"
+          showCharCount
           maxLength={100}
           value={addName}
           onChange={(e) => setAddName(e.target.value)}
@@ -42,12 +43,14 @@ export function AddContactForm({
           <Input
             label="Correo electrónico"
             type="email"
+            showCharCount
             maxLength={150}
             value={addEmail}
             onChange={(e) => setAddEmail(e.target.value)}
           />
           <Input
             label="Cargo / Puesto"
+            showCharCount
             maxLength={100}
             value={addJobTitle}
             onChange={(e) => setAddJobTitle(e.target.value)}
