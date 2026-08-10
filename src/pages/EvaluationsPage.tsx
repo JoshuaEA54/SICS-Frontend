@@ -1,6 +1,6 @@
 ﻿import { Header } from "@/components/layout/Header";
 import { PageLayout } from "@/components/layout/PageLayout";
-import { ExpertEvaluationsDashboard } from "@/features/evaluations/components/ExpertEvaluationsDashboard";
+import { ExpertDashboard } from "@/features/evaluations/components/ExpertDashboard";
 import { CompanyEvaluationsDashboard } from "@/features/evaluations/components/CompanyEvaluationsDashboard";
 import { useAuthStore } from "@/store/authStore";
 
@@ -12,7 +12,7 @@ export function EvaluationsPage() {
     <PageLayout>
       <Header />
       {isExpert ? (
-        <ExpertEvaluationsDashboard />
+        <ExpertDashboard />
       ) : (
         <CompanyEvaluationsDashboard />
       )}

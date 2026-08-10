@@ -56,7 +56,7 @@ export function ExpertFiltersBar({
 
   return (
     <div className="rounded-xl border border-border bg-surface p-4">
-      <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-end lg:gap-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:gap-3">
         <ExpertStatusFilterChips
           pending={pendingCount}
           reviewed={reviewedCount}
