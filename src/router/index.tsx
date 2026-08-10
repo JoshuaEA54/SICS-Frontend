@@ -73,6 +73,11 @@ export const router = createBrowserRouter([
     loader: requireRegistered,
   },
   {
+    path: '/gestion-controles',
+    element: <EvaluationsPage />,
+    loader: requireRegistered,
+  },
+  {
     path: '/evaluaciones/:evaluationId',
     element: <ExpertEvaluationPage />,
     loader: requireRegistered,
