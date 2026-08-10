@@ -30,7 +30,7 @@ export function ExpertCompanyResponse({
           <p className="mb-1 text-[12px] font-medium text-[#44445a]">
             Observaciones
           </p>
-          <p className="whitespace-pre-wrap text-[13.2px] font-light text-text-secondary">
+          <p className="whitespace-pre-wrap break-words text-[13.2px] font-light text-text-secondary">
             {observations}
           </p>
         </div>

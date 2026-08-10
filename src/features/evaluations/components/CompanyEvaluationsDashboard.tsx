@@ -90,7 +90,7 @@ export function CompanyEvaluationsDashboard() {
   }
 
   const reportTitle = activeReportEvaluation
-    ? `Informe — ${activeReportEvaluation.company_name ?? "Evaluación"}`
+    ? `Informe - ${activeReportEvaluation.company_name ?? "Evaluación"}`
     : "Informe de cumplimiento";
 
   const canCreateNew = !hasSubmitted && !hasDraft;

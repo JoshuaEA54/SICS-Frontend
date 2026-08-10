@@ -82,30 +82,14 @@ export function GroupFormModal({
           )}
         </InfoBanner>
 
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-baseline justify-between">
-            <label htmlFor="group-name" className="flex items-baseline gap-1.5">
-              <span className="text-[12.8px] font-medium text-text-primary">Nombre</span>
-              {nameIsEmpty && (
-                <span className="text-[10px] font-semibold text-red-500">REQUERIDO *</span>
-              )}
-            </label>
-            <span
-              className={`text-[11px] tabular-nums ${
-                name.length >= CONTROL_GROUP_NAME_MAX_LENGTH ? 'text-red-500' : 'text-text-muted'
-              }`}
-            >
-              {name.length} / {CONTROL_GROUP_NAME_MAX_LENGTH}
-            </span>
-          </div>
-          <Input
-            id="group-name"
-            maxLength={CONTROL_GROUP_NAME_MAX_LENGTH}
-            error={nameIsEmpty}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
+        <Input
+          label="Nombre"
+          required
+          showCharCount
+          maxLength={CONTROL_GROUP_NAME_MAX_LENGTH}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
         <Textarea
           label="Descripción"

@@ -1,21 +1,21 @@
-import { type ReactNode } from 'react'
+import { type ReactNode } from "react";
 import {
   EXPERT_VERDICT_OPTIONS,
   getVerdictSelectorButtonClasses,
-} from '@/features/evaluations/verdictDisplay'
-import { CheckSmIcon, InfoIcon, XIcon } from '@/components/ui/Icons'
-import { type ResponseVerdict } from '@/types/evaluation'
+} from "@/features/evaluations/verdictDisplay";
+import { CheckSmIcon, InfoIcon, XIcon } from "@/components/ui/Icons";
+import { type ResponseVerdict } from "@/types/evaluation";
 
 interface ExpertVerdictSelectorProps {
-  value: ResponseVerdict | null
-  onChange: (verdict: ResponseVerdict) => void
+  value: ResponseVerdict | null;
+  onChange: (verdict: ResponseVerdict) => void;
 }
 
 const VERDICT_ICONS: Record<ResponseVerdict, ReactNode> = {
   complies: <CheckSmIcon />,
   complies_with_observations: <InfoIcon />,
   does_not_comply: <XIcon />,
-}
+};
 
 export function ExpertVerdictSelector({
   value,
@@ -25,11 +25,11 @@ export function ExpertVerdictSelector({
     <div
       role="radiogroup"
       aria-label="Veredicto del experto"
-      className="flex flex-wrap gap-2"
+      className="flex flex-col lg:flex-row gap-2"
     >
       {EXPERT_VERDICT_OPTIONS.map((opt) => {
-        const selected = value === opt.value
-        const styles = getVerdictSelectorButtonClasses(opt.value, selected)
+        const selected = value === opt.value;
+        const styles = getVerdictSelectorButtonClasses(opt.value, selected);
 
         return (
           <button
@@ -45,10 +45,12 @@ export function ExpertVerdictSelector({
             >
               {VERDICT_ICONS[opt.value]}
             </span>
-            <span className="text-[13px] font-medium leading-tight">{opt.label}</span>
+            <span className="text-[13px] font-medium leading-tight">
+              {opt.label}
+            </span>
           </button>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

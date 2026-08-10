@@ -1,11 +1,11 @@
 import { useEffect } from "react";
+import { Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ArrowRightIcon, ArrowLeftIcon } from "@/components/ui/Icons";
 import { InfoBanner } from "@/components/ui/InfoBanner";
 import { useAuthStore } from "@/store/authStore";
-import { useRegisterStore } from "@/store/registerStore";
 import { useRegisterStep2 } from "../hooks/useRegisterStep2";
 import { AddContactForm } from "./AddContactForm";
 import { ContactList } from "./ContactList";
@@ -24,20 +24,16 @@ function SectionDivider({ label }: { label: string }) {
 
 export function RegisterStep2Form() {
   const navigate = useNavigate();
-  const setCompanyId = useRegisterStore((s) => s.setCompanyId);
   const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
     if (!user?.company_id) {
       navigate("/registro", { replace: true });
-      return;
     }
-    // Asegura que registerStore tenga el companyId para la restauración del paso 1 (Volver)
-    setCompanyId(String(user.company_id));
-  }, [user?.company_id, navigate, setCompanyId]);
+  }, [user?.company_id, navigate]);
 
   const {
-    register,
+    control,
     errors,
     isSubmitting,
     onSubmit,
@@ -81,21 +77,35 @@ export function RegisterStep2Form() {
             </p>
           </div>
 
-          <Input
-            label="Nombre del responsable"
-            required
-            maxLength={100}
-            helperText="Puede modificar el nombre si lo requiere."
-            error={errors.responsible_name?.message}
-            {...register("responsible_name")}
+          <Controller
+            name="responsible_name"
+            control={control}
+            render={({ field }) => (
+              <Input
+                label="Nombre del responsable"
+                required
+                showCharCount
+                maxLength={100}
+                helperText="Puede modificar el nombre si lo requiere."
+                error={errors.responsible_name?.message}
+                {...field}
+              />
+            )}
           />
 
-          <Input
-            label="Cargo / Puesto"
-            required
-            maxLength={100}
-            error={errors.responsible_position?.message}
-            {...register("responsible_position")}
+          <Controller
+            name="responsible_position"
+            control={control}
+            render={({ field }) => (
+              <Input
+                label="Cargo / Puesto"
+                required
+                showCharCount
+                maxLength={100}
+                error={errors.responsible_position?.message}
+                {...field}
+              />
+            )}
           />
 
           <SectionDivider label="Destinatarios del informe" />

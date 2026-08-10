@@ -1,3 +1,4 @@
+import { Controller } from "react-hook-form";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
@@ -19,7 +20,7 @@ function SectionDivider({ label }: { label: string }) {
 
 export function RegisterStep1Form() {
   const {
-    register,
+    control,
     errors,
     isSubmitting,
     onSubmit,
@@ -57,63 +58,100 @@ export function RegisterStep1Form() {
             </p>
           </div>
 
-          <Input
-            label="Nombre de la empresa"
-            required
-            maxLength={100}
-            error={errors.name?.message}
-            {...register("name")}
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <Input
+                label="Nombre de la empresa"
+                required
+                showCharCount
+                maxLength={100}
+                error={errors.name?.message}
+                {...field}
+              />
+            )}
           />
 
           <div className="grid grid-cols-2 gap-4">
-            <Select
-              label="Sector"
-              required
-              options={sectors}
-              placeholder="Seleccione"
-              error={errors.sector_id?.message}
-              {...register("sector_id")}
+            <Controller
+              name="sector_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  label="Sector"
+                  required
+                  options={sectors}
+                  placeholder="Seleccione"
+                  error={errors.sector_id?.message}
+                  {...field}
+                />
+              )}
             />
-            <Select
-              label="Cantidad de empleados"
-              required
-              options={employeeRanges}
-              placeholder="Seleccione"
-              error={errors.employee_range_id?.message}
-              {...register("employee_range_id")}
+            <Controller
+              name="employee_range_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  label="Cantidad de empleados"
+                  required
+                  options={employeeRanges}
+                  placeholder="Seleccione"
+                  error={errors.employee_range_id?.message}
+                  {...field}
+                />
+              )}
             />
           </div>
 
           <SectionDivider label="Dirección sede central" />
 
           <div className="grid grid-cols-2 gap-4">
-            <Select
-              label="Provincia"
-              required
-              options={provinces}
-              placeholder="Seleccione"
-              error={errors.province_id?.message}
-              {...register("province_id")}
+            <Controller
+              name="province_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  label="Provincia"
+                  required
+                  options={provinces}
+                  placeholder="Seleccione"
+                  error={errors.province_id?.message}
+                  {...field}
+                />
+              )}
             />
-            <Select
-              label="Cantón"
-              required
-              options={cantons}
-              placeholder="Seleccione"
-              error={errors.canton_id?.message}
-              disabled={!cantons.length}
-              {...register("canton_id")}
+            <Controller
+              name="canton_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  label="Cantón"
+                  required
+                  options={cantons}
+                  placeholder="Seleccione"
+                  error={errors.canton_id?.message}
+                  disabled={!cantons.length}
+                  {...field}
+                />
+              )}
             />
           </div>
 
-          <Select
-            label="Distrito"
-            required
-            options={districts}
-            placeholder="Seleccione"
-            error={errors.district_id?.message}
-            disabled={!districts.length}
-            {...register("district_id")}
+          <Controller
+            name="district_id"
+            control={control}
+            render={({ field }) => (
+              <Select
+                label="Distrito"
+                required
+                options={districts}
+                placeholder="Seleccione"
+                error={errors.district_id?.message}
+                disabled={!districts.length}
+                {...field}
+              />
+            )}
           />
 
           <SectionDivider label="Sucursales" />
@@ -136,14 +174,20 @@ export function RegisterStep1Form() {
 
           {hasBranches === "true" && (
             <div className="border-l-2 border-[#dbeafe] pl-3">
-              <Input
-                label="Número de sucursales"
-                required
-                type="number"
-                min={1}
-                helperText="Indique la cantidad de sucursales adicionales a la sede central."
-                error={errors.branch_count?.message}
-                {...register("branch_count")}
+              <Controller
+                name="branch_count"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    label="Número de sucursales"
+                    required
+                    type="number"
+                    min={1}
+                    helperText="Indique la cantidad de sucursales adicionales a la sede central."
+                    error={errors.branch_count?.message}
+                    {...field}
+                  />
+                )}
               />
             </div>
           )}

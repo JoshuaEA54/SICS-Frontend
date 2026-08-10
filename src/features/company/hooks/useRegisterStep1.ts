@@ -15,13 +15,13 @@ import { useGeographyCascade } from "./useGeographyCascade";
 
 export function useRegisterStep1() {
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
   const setAuth = useAuthStore((s) => s.setAuth);
-  const companyId = useRegisterStore((s) => s.companyId);
-  const setCompanyId = useRegisterStore((s) => s.setCompanyId);
+  const companyId = user?.company_id ? String(user.company_id) : null;
   const setStep1Data = useRegisterStore((s) => s.setStep1Data);
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
@@ -64,6 +64,7 @@ export function useRegisterStep1() {
   }, []);
 
   const { cantons, districts } = useGeographyCascade({
+    companyId,
     provinceId,
     cantonId,
     setValue,
@@ -83,12 +84,9 @@ export function useRegisterStep1() {
             : 0,
       };
 
-      let resolvedCompanyId: string;
-
       if (companyId) {
         // Usuario volvió al paso 1 para corregir — empresa y usuario ya existen
-        const updated = await companiesApi.updateCompany(companyId, payload);
-        resolvedCompanyId = String(updated.id);
+        await companiesApi.updateCompany(companyId, payload);
       } else {
         // Primera vez — crear empresa y usuario en el mismo request
         const tokenData = await companiesApi.create(payload);
@@ -98,10 +96,8 @@ export function useRegisterStep1() {
           tokenData.refresh_token,
           tokenData.flow,
         );
-        resolvedCompanyId = String(tokenData.user?.company_id ?? "");
       }
 
-      setCompanyId(resolvedCompanyId);
       setStep1Data({
         name: data.name,
         sector_id: data.sector_id,
@@ -118,7 +114,7 @@ export function useRegisterStep1() {
   );
 
   return {
-    register,
+    control,
     errors,
     isSubmitting,
     onSubmit,

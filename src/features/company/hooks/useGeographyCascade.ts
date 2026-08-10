@@ -7,6 +7,7 @@ import type { RegisterStep1FormValues } from "@/types/company";
 import type { SelectOption } from "./registerStep1Helpers";
 
 interface Params {
+  companyId: string | null;
   provinceId: string;
   cantonId: string;
   setValue: UseFormSetValue<RegisterStep1FormValues>;
@@ -18,8 +19,7 @@ interface Result {
   districts: SelectOption[];
 }
 
-export function useGeographyCascade({ provinceId, cantonId, setValue, reset }: Params): Result {
-  const companyId = useRegisterStore((s) => s.companyId);
+export function useGeographyCascade({ companyId, provinceId, cantonId, setValue, reset }: Params): Result {
   const step1Data = useRegisterStore((s) => s.step1Data);
   const setStep1Data = useRegisterStore((s) => s.setStep1Data);
 
