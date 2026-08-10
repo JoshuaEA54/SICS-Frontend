@@ -4,7 +4,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   required?: boolean
   helperText?: string
-  error?: string
+  error?: string | boolean
   leftElement?: ReactNode
 }
 
@@ -41,14 +41,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         <input
           ref={ref}
           id={id}
-          className={`w-full rounded-[7px] border bg-surface-bg px-[13.4px] py-[9.4px] text-sm font-light text-text-primary placeholder:text-text-muted/50 transition-colors focus:border-primary focus:bg-white focus:outline-none ${error ? 'border-red-400' : 'border-border'} ${leftElement ? 'pl-9' : ''} ${className}`}
+          className={`w-full rounded-[7px] border bg-surface-bg px-[13.4px] py-[9.4px] text-sm font-light text-text-primary placeholder:text-text-muted/50 transition-colors focus:bg-white focus:outline-none ${error ? 'border-red-400 focus:border-red-400' : 'border-border focus:border-primary'} ${leftElement ? 'pl-9' : ''} ${className}`}
           {...props}
         />
       </div>
       {helperText && !error && (
         <p className="text-[11.5px] text-text-muted">{helperText}</p>
       )}
-      {error && <p className="text-[11.5px] text-red-500">{error}</p>}
+      {typeof error === 'string' && error && <p className="text-[11.5px] text-red-500">{error}</p>}
     </div>
   )
 })
